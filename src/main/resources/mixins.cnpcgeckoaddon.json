@@ -1,0 +1,9 @@
+{
+  "minVersion": "0.7.11",
+  "compatibilityLevel": "JAVA_8",
+  "package": "com.goodbird.eliciantweaker.mixins",
+  "refmap": "mixins.eliciantweaker.refmap.json",
+  "mixins": [],
+  "client": ["MixinMainWindow"],
+  "server": []
+}
