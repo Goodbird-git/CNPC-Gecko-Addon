@@ -1,7 +1,7 @@
 package com.goodbird.cnpcgeckoaddon;
 
 import com.goodbird.cnpcgeckoaddon.client.ClientProxy;
-import net.minecraftforge.fml.ModLoadingContext;
+import com.goodbird.cnpcgeckoaddon.network.NetworkWrapper;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -17,7 +17,7 @@ public class CNPCGeckoAddon {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-
+        NetworkWrapper.init();
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
