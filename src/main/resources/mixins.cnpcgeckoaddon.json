@@ -1,9 +1,9 @@
 {
   "minVersion": "0.7.11",
   "compatibilityLevel": "JAVA_8",
-  "package": "com.goodbird.eliciantweaker.mixins",
+  "package": "com.goodbird.cnpcgeckoaddon.mixin.impl",
   "refmap": "mixins.eliciantweaker.refmap.json",
-  "mixins": [],
-  "client": ["MixinMainWindow"],
+  "mixins": ["MixinDataDisplay"],
+  "client": [],
   "server": []
 }
