@@ -5,7 +5,9 @@
   "refmap": "mixins.eliciantweaker.refmap.json",
   "mixins": [
     "MixinDataDisplay",
-    "MixinEntityUtil"
+    "MixinEntityUtil",
+    "MixinNpcWrapper",
+    "MixinWrapperNpcApi"
   ],
   "client": [
     "MixinGuiCreationEntities",
