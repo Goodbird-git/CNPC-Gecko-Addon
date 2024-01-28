@@ -34,14 +34,15 @@ public class MixinGuiCreationEntities extends GuiCreationScreenInterface {
             for(ResourceLocation resLoc : GeckoLibCache.getInstance().getGeoModels().keySet()){
                 list.add(resLoc.toString());
             }
-            this.addButton(new GuiButtonNop(this, 202, this.guiLeft + 122, this.guiTop + 18, 120, 20, customModel.modelResLoc.getPath(), (b) -> {
+            addLabel(new GuiLabel(212,"Model:", this.guiLeft + 124, this.guiTop + 26,0xffffff));
+            this.addButton(new GuiButtonNop(this, 202, this.guiLeft + 160, this.guiTop + 20, 150, 20, customModel.modelResLoc.getPath(), (b) -> {
                 setSubGui(new GuiStringSelection(this, "Selecting geckolib model:", list, name -> {
                     ((IDataDisplay)npc.display).getCustomModelData().setModel(name);
                     getButton(202).setDisplayText(name);
                 }));
             }));
-            addLabel(new GuiLabel(12,"Model Animation:", this.guiLeft + 124, this.guiTop + 46,0xffffff));
-            this.addButton(new GuiButtonNop(this,12,this.guiLeft + 210, this.guiTop + 40, 100, 20, "selectServer.edit",(b)->{
+            addLabel(new GuiLabel(213,"Model Animation:", this.guiLeft + 124, this.guiTop + 46,0xffffff));
+            this.addButton(new GuiButtonNop(this,212,this.guiLeft + 210, this.guiTop + 40, 100, 20, "selectServer.edit",(b)->{
                 setSubGui(new GuiModelAnimation());
             }));
         }
