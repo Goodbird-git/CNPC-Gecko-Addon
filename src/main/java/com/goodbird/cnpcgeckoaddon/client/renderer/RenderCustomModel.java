@@ -36,15 +36,19 @@ public class RenderCustomModel extends GeoEntityRendererCompat<EntityCustomModel
     public void render(GeoModel model, EntityCustomModel animatable, float partialTick, RenderType type, MatrixStack matrixStackIn,
                        @Nullable IRenderTypeBuffer renderTypeBuffer, @Nullable IVertexBuilder vertexBuilder, int packedLightIn,
                        int packedOverlayIn, float red, float green, float blue, float alpha) {
-        if (model.getBone("held_item").isPresent() && !animatable.getMainHandItem().isEmpty()) {
+        if (model.getBone("held_item").isPresent()) {
             GeoBone bone = model.getBone("held_item").get();
             bone.isHidden = true;
-            this.renderItem(bone, animatable.getMainHandItem(), matrixStackIn, renderTypeBuffer,packedLightIn);
+            if(!animatable.getMainHandItem().isEmpty()) {
+                this.renderItem(bone, animatable.getMainHandItem(), matrixStackIn, renderTypeBuffer, packedLightIn);
+            }
         }
-        if (model.getBone("left_held_item").isPresent() && !animatable.getMainHandItem().isEmpty()) {
+        if (model.getBone("left_held_item").isPresent()) {
             GeoBone bone = model.getBone("left_held_item").get();
             bone.isHidden = true;
-            this.renderItem(bone, animatable.leftHeldItem, matrixStackIn, renderTypeBuffer,packedLightIn);
+            if(!animatable.getMainHandItem().isEmpty()) {
+                this.renderItem(bone, animatable.leftHeldItem, matrixStackIn, renderTypeBuffer, packedLightIn);
+            }
         }
         super.render(model, animatable, partialTick, type,matrixStackIn,renderTypeBuffer,vertexBuilder,packedLightIn,packedOverlayIn,red,green,blue,alpha);
     }
