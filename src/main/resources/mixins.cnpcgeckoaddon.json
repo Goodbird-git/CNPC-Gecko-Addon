@@ -4,7 +4,8 @@
   "package": "com.goodbird.cnpcgeckoaddon.mixin.impl",
   "refmap": "mixins.eliciantweaker.refmap.json",
   "mixins": [
-    "MixinDataDisplay"
+    "MixinDataDisplay",
+    "MixinEntityUtil"
   ],
   "client": [
     "MixinRenderNPCInterface"
