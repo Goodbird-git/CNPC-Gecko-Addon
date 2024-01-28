@@ -8,6 +8,7 @@
     "MixinEntityUtil"
   ],
   "client": [
+    "MixinGuiCreationEntities",
     "MixinRenderNPCInterface"
   ],
   "server": []
