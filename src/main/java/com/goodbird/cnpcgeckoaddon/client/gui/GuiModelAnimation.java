@@ -21,8 +21,8 @@ public class GuiModelAnimation extends GuiNPCInterface implements ITextfieldList
         addSelectionBlock(1,y,"Animation File:",getModelData(npc).getAnimFile());
         addSelectionBlock(2,y+=23,"Idle:",getModelData(npc).getIdleAnim());
         addSelectionBlock(3,y+=23,"Walk:",getModelData(npc).getWalkAnim());
-        addSelectionBlock(4,y+=23,"Attack:",getModelData(npc).getAttackAnim());
-        addSelectionBlock(5,y+23,"Hurt:",getModelData(npc).getHurtAnim());
+//        addSelectionBlock(4,y+=23,"Attack:",getModelData(npc).getAttackAnim()); COMMING SOON
+//        addSelectionBlock(5,y+23,"Hurt:",getModelData(npc).getHurtAnim()); COMMING SOON
         this.addButton(new GuiButtonNop(this, 670, width - 22, 2, 20, 20, "X"));
     }
 
