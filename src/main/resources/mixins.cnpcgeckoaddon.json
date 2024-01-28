@@ -3,7 +3,11 @@
   "compatibilityLevel": "JAVA_8",
   "package": "com.goodbird.cnpcgeckoaddon.mixin.impl",
   "refmap": "mixins.eliciantweaker.refmap.json",
-  "mixins": ["MixinDataDisplay"],
-  "client": [],
+  "mixins": [
+    "MixinDataDisplay"
+  ],
+  "client": [
+    "MixinRenderNPCInterface"
+  ],
   "server": []
 }
