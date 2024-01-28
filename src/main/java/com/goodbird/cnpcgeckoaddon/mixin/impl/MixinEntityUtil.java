@@ -28,7 +28,9 @@ public class MixinEntityUtil {
             modelEntity.walkAnim = display.getCustomModelData().getWalkAnim();
             modelEntity.attackAnim = display.getCustomModelData().getAttackAnim();
             modelEntity.hurtAnim = display.getCustomModelData().getHurtAnim();
-            modelEntity.leftHeldItem = npc.inventory.getLeftHand().getMCItemStack();
+            if(npc.inventory.getLeftHand()!=null) {
+                modelEntity.leftHeldItem = npc.inventory.getLeftHand().getMCItemStack();
+            }
         }
     }
 }
