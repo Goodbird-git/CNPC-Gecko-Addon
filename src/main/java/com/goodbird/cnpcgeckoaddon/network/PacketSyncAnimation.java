@@ -62,7 +62,6 @@ public class PacketSyncAnimation {
         return new PacketSyncAnimation(id,builder);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static void handle(PacketSyncAnimation packet, Supplier<NetworkEvent.Context> ctx) {
         Entity entity = Minecraft.getInstance().player.getCommandSenderWorld().getEntity(packet.id);
         if(!(entity instanceof EntityCustomNpc)) return;
