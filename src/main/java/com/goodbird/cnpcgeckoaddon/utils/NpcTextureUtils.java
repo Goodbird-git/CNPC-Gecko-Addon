@@ -65,8 +65,7 @@ public class NpcTextureUtils {
         TextureManager texturemanager = Minecraft.getInstance().getTextureManager();
         Texture object = texturemanager.getTexture(resource);
         if (object == null) {
-            object = new ImageDownloadAlt(file, par1Str, DefaultPlayerSkin.getDefaultSkin(), fix64, () -> {
-            });
+            object = new ImageDownloadAlt(file, par1Str, DefaultPlayerSkin.getDefaultSkin(), fix64);
             texturemanager.register(resource, object);
         }
 
