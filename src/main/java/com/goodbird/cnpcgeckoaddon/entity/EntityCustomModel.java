@@ -1,5 +1,6 @@
 package com.goodbird.cnpcgeckoaddon.entity;
 
+import com.goodbird.cnpcgeckoaddon.mixin.IAnimationController;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
@@ -32,7 +33,7 @@ public class EntityCustomModel extends CreatureEntity implements IAnimatable, IA
             if (event.getController().getAnimationState() == AnimationState.Stopped) {
                 manualAnim = null;
             } else {
-                if (event.getController().currentAnimationBuilder != manualAnim) {
+                if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() != manualAnim) {
                     event.getController().markNeedsReload();
                 }
                 event.getController().setAnimation(manualAnim);
@@ -43,7 +44,7 @@ public class EntityCustomModel extends CreatureEntity implements IAnimatable, IA
             if (event.getController().getAnimationState() == AnimationState.Stopped) {
                 dialogAnim = null;
             } else {
-                if (event.getController().currentAnimationBuilder != dialogAnim) {
+                if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() != dialogAnim) {
                     event.getController().markNeedsReload();
                 }
                 event.getController().setAnimation(dialogAnim);

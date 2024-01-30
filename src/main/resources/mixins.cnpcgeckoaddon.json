@@ -4,6 +4,7 @@
   "package": "com.goodbird.cnpcgeckoaddon.mixin.impl",
   "refmap": "mixins.cnpcgeckoaddon.refmap.json",
   "mixins": [
+    "MixinAnimationController",
     "MixinDataDisplay",
     "MixinEntityUtil",
     "MixinNpcWrapper",
