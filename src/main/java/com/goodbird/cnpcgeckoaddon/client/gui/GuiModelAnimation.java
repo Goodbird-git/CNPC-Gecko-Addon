@@ -2,17 +2,13 @@ package com.goodbird.cnpcgeckoaddon.client.gui;
 
 import com.goodbird.cnpcgeckoaddon.data.CustomModelData;
 import com.goodbird.cnpcgeckoaddon.mixin.IDataDisplay;
-import net.minecraft.util.ResourceLocation;
-import noppes.npcs.client.gui.util.GuiNPCInterface;
-import noppes.npcs.entity.EntityNPCInterface;
-import noppes.npcs.shared.client.gui.components.GuiButtonNop;
-import noppes.npcs.shared.client.gui.components.GuiLabel;
-import noppes.npcs.shared.client.gui.components.GuiTextFieldNop;
-import noppes.npcs.shared.client.gui.listeners.ITextfieldListener;
 import com.goodbird.cnpcgeckoaddon.utils.AnimationFileUtil;
+import net.minecraft.util.ResourceLocation;
+import noppes.npcs.client.gui.util.*;
+import noppes.npcs.entity.EntityNPCInterface;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 
-public class GuiModelAnimation extends GuiNPCInterface implements ITextfieldListener {
+public class GuiModelAnimation extends SubGuiInterface implements ITextfieldListener {
 
     @Override
     public void init() {
@@ -23,21 +19,20 @@ public class GuiModelAnimation extends GuiNPCInterface implements ITextfieldList
         addSelectionBlock(3,y+=23,"Walk:",getModelData(npc).getWalkAnim());
 //        addSelectionBlock(4,y+=23,"Attack:",getModelData(npc).getAttackAnim()); COMMING SOON
 //        addSelectionBlock(5,y+23,"Hurt:",getModelData(npc).getHurtAnim()); COMMING SOON
-        this.addButton(new GuiButtonNop(this, 670, width - 22, 2, 20, 20, "X"));
+        this.addButton(new GuiNpcButton(this, 670, width - 22, 2, 20, 20, "X"));
     }
 
     public CustomModelData getModelData(EntityNPCInterface npc){
         return ((IDataDisplay)npc.display).getCustomModelData();
     }
-    
+
     public void addSelectionBlock(int id, int y, String label, String value){
-        this.addLabel(new GuiLabel(id,label, guiLeft - 85, y + 5,0xffffff));
-        addTextField(new GuiTextFieldNop(id,this, guiLeft - 40, y, 200, 20, value));
-        this.addButton(new GuiButtonNop(this,id, guiLeft + 163, y, 80, 20, "mco.template.button.select"));
+        this.addLabel(new GuiNpcLabel(id,label, guiLeft - 85, y + 5,0xffffff));
+        addTextField(new GuiNpcTextField(id,this, guiLeft - 40, y, 200, 20, value));
+        this.addButton(new GuiNpcButton(this,id, guiLeft + 163, y, 80, 20, "mco.template.button.select"));
     }
 
-    @Override
-    public void buttonEvent(GuiButtonNop button) {
+    public void buttonEvent(GuiNpcButton button) {
         if(button.id == 670){
             close();
         }
@@ -76,7 +71,7 @@ public class GuiModelAnimation extends GuiNPCInterface implements ITextfieldList
     }
 
     @Override
-    public void unFocused(GuiTextFieldNop textfield) {
+    public void unFocused(GuiNpcTextField textfield) {
         if(textfield.id == 1 && isValidAnimFile(textfield.getValue())){
             if(!textfield.isEmpty())
                 getModelData(npc).setAnimFile(textfield.getValue());
