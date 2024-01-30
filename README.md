@@ -2,7 +2,7 @@
 An addon for Geckolib3 and Custom NPC that allows the use of geckolib models for your NPC
 
 ### Installation
-This mod is an ***addon*** for CustomNPC and Geckolib3. So you need to install CustomNPC and Geckolib3 mods first. Then youDo not install CustomNPC with CustomNPC-Plus. Then simply drag this CNPC-Gecko-Addon into any client/server mods folder to utilize. Report any bugs if found, thank you and enjoy.
+This mod is an ***addon*** for CustomNPC and Geckolib3. So you need to install CustomNPC and Geckolib3 mods first. This mod also uses Mixins, so you need to install Mixin Bootstrap mod or any other mixin booting mod. Then simply drag this CNPC-Gecko-Addon into any client/server mods folder to utilize. Report any bugs if found, thank you and enjoy.
 
 ### Features:
  - New model type for NPCs - Geckolib Model
