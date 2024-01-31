@@ -1,6 +1,6 @@
 package com.goodbird.cnpcgeckoaddon.data;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 public class CustomModelData {
     private String model = "geckolib3:geo/bike.geo.json";
@@ -10,7 +10,7 @@ public class CustomModelData {
     private String attackAnim = "";
     private String hurtAnim = "";
 
-    public CompoundNBT writeToNBT(CompoundNBT CompoundNBT) {
+    public CompoundTag writeToNBT(CompoundTag CompoundNBT) {
         CompoundNBT.putString("Model", model);
         CompoundNBT.putString("AnimFile", animFile);
         CompoundNBT.putString("IdleAnim", idleAnim);
@@ -20,7 +20,7 @@ public class CustomModelData {
         return CompoundNBT;
     }
 
-    public void readFromNBT(CompoundNBT CompoundNBT) {
+    public void readFromNBT(CompoundTag CompoundNBT) {
         if(CompoundNBT.contains("Model")) {
             model = CompoundNBT.getString("Model");
             animFile = CompoundNBT.getString("AnimFile");

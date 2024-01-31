@@ -3,7 +3,7 @@ package com.goodbird.cnpcgeckoaddon.mixin.impl;
 import com.goodbird.cnpcgeckoaddon.data.CustomModelData;
 import com.goodbird.cnpcgeckoaddon.entity.EntityCustomModel;
 import com.goodbird.cnpcgeckoaddon.mixin.IDataDisplay;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.entity.data.DataDisplay;
@@ -24,13 +24,13 @@ public class MixinDataDisplay implements IDataDisplay {
     private final CustomModelData customNPC_Gecko_Addon$customModelData = new CustomModelData();
 
     @Inject(method = "save", at = @At("HEAD"), remap = false)
-    public void writeToNBT(CompoundNBT nbttagcompound, CallbackInfoReturnable<CompoundNBT> cir) {
+    public void writeToNBT(CompoundTag nbttagcompound, CallbackInfoReturnable<CompoundTag> cir) {
         if(hasCustomModel())
             customNPC_Gecko_Addon$customModelData.writeToNBT(nbttagcompound);
     }
 
     @Inject(method = "readToNBT", at = @At("HEAD"), remap = false)
-    public void readFromNBT(CompoundNBT nbttagcompound, CallbackInfo ci){
+    public void readFromNBT(CompoundTag nbttagcompound, CallbackInfo ci){
         customNPC_Gecko_Addon$customModelData.readFromNBT(nbttagcompound);
     }
 
