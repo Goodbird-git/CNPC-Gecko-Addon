@@ -3,14 +3,14 @@ package com.goodbird.cnpcgeckoaddon.utils;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.Texture;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.util.ResourceLocation;
-import noppes.npcs.client.renderer.ImageDownloadAlt;
+import net.minecraft.resources.ResourceLocation;
 import noppes.npcs.client.renderer.RenderNPCInterface;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
+import noppes.npcs.shared.client.util.ImageDownloadAlt;
 
 import java.io.File;
 import java.security.MessageDigest;
@@ -63,10 +63,9 @@ public class NpcTextureUtils {
     }
     private static void loadSkin(File file, ResourceLocation resource, String par1Str, boolean fix64) {
         TextureManager texturemanager = Minecraft.getInstance().getTextureManager();
-        Texture object = texturemanager.getTexture(resource);
+        AbstractTexture object = texturemanager.getTexture(resource);
         if (object == null) {
-            object = new ImageDownloadAlt(file, par1Str, DefaultPlayerSkin.getDefaultSkin(), fix64, () -> {
-            });
+            object = new ImageDownloadAlt(file, par1Str, resource, DefaultPlayerSkin.getDefaultSkin(), fix64, () -> {});
             texturemanager.register(resource, object);
         }
 
