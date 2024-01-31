@@ -2,17 +2,17 @@ package com.goodbird.cnpcgeckoaddon.client.renderer;
 
 import com.goodbird.cnpcgeckoaddon.client.model.ModelCustom;
 import com.goodbird.cnpcgeckoaddon.entity.EntityCustomModel;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 
@@ -21,36 +21,36 @@ import java.util.ArrayList;
 
 public class RenderCustomModel extends GeoEntityRendererCompat<EntityCustomModel> {
 
-    public RenderCustomModel(EntityRendererManager renderManager) {
+    public RenderCustomModel(EntityRendererProvider.Context renderManager) {
         super(renderManager, new ModelCustom());
     }
 
     @Override
-    public RenderType getRenderType(EntityCustomModel animatable, float partialTicks, MatrixStack stack,
-                                    IRenderTypeBuffer renderTypeBuffer, IVertexBuilder vertexBuilder, int packedLightIn,
-                                    ResourceLocation textureLocation) {
+    public RenderType getRenderType(EntityCustomModel animatable, float partialTick, PoseStack poseStack,
+                                    MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight,
+                                    ResourceLocation texture) {
         return RenderType.entityTranslucent(getTextureLocation(animatable));
     }
 
     @Override
-    public void render(GeoModel model, EntityCustomModel animatable, float partialTick, RenderType type, MatrixStack matrixStackIn,
-                       @Nullable IRenderTypeBuffer renderTypeBuffer, @Nullable IVertexBuilder vertexBuilder, int packedLightIn,
-                       int packedOverlayIn, float red, float green, float blue, float alpha) {
+    public void render(GeoModel model, EntityCustomModel animatable, float partialTick, RenderType type, PoseStack poseStack,
+                       @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, int packedLight,
+                       int packedOverlay, float red, float green, float blue, float alpha){
         if (model.getBone("held_item").isPresent()) {
             GeoBone bone = model.getBone("held_item").get();
             bone.isHidden = true;
             if(!animatable.getMainHandItem().isEmpty()) {
-                this.renderItem(bone, animatable.getMainHandItem(), matrixStackIn, renderTypeBuffer, packedLightIn);
+                this.renderItem(bone, animatable.getMainHandItem(), poseStack, bufferSource, packedLight);
             }
         }
         if (model.getBone("left_held_item").isPresent()) {
             GeoBone bone = model.getBone("left_held_item").get();
             bone.isHidden = true;
             if(!animatable.getMainHandItem().isEmpty()) {
-                this.renderItem(bone, animatable.leftHeldItem, matrixStackIn, renderTypeBuffer, packedLightIn);
+                this.renderItem(bone, animatable.leftHeldItem, poseStack, bufferSource, packedLight);
             }
         }
-        super.render(model, animatable, partialTick, type,matrixStackIn,renderTypeBuffer,vertexBuilder,packedLightIn,packedOverlayIn,red,green,blue,alpha);
+        super.render(model, animatable, partialTick, type, poseStack, bufferSource, buffer, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
     public GeoBone[] getPathFromRoot(GeoBone bone) {
@@ -62,7 +62,7 @@ public class RenderCustomModel extends GeoEntityRendererCompat<EntityCustomModel
         return bones.toArray(new GeoBone[0]);
     }
 
-    public void renderItem(GeoBone locator, ItemStack stack, MatrixStack poseStack, IRenderTypeBuffer buf, int light) {
+    public void renderItem(GeoBone locator, ItemStack stack, PoseStack poseStack, MultiBufferSource buf, int light) {
         poseStack.pushPose();
         float scale = 0.7F;
         poseStack.scale(scale, scale, scale);
@@ -81,7 +81,7 @@ public class RenderCustomModel extends GeoEntityRendererCompat<EntityCustomModel
         poseStack.translate(locator.getPivotX()/10f*5f/6f,locator.getPivotY()/10f*12f/14f,0);
         poseStack.mulPose(Vector3f.XP.rotationDegrees(215f));
         poseStack.mulPose(Vector3f.YP.rotationDegrees(90));
-        Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemCameraTransforms.TransformType.FIXED,light, OverlayTexture.NO_OVERLAY, poseStack, buf);
+        Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemTransforms.TransformType.FIXED,light, OverlayTexture.NO_OVERLAY, poseStack, buf,0);
         poseStack.popPose();
     }
 }

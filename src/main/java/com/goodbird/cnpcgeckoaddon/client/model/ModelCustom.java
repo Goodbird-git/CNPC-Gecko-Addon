@@ -1,7 +1,7 @@
 package com.goodbird.cnpcgeckoaddon.client.model;
 
 import com.goodbird.cnpcgeckoaddon.entity.EntityCustomModel;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class ModelCustom extends AnimatedGeoModel<EntityCustomModel> {

@@ -1,11 +1,15 @@
 package com.goodbird.cnpcgeckoaddon.entity;
 
 import com.goodbird.cnpcgeckoaddon.mixin.IAnimationController;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimationTickable;
@@ -15,9 +19,10 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
-public class EntityCustomModel extends CreatureEntity implements IAnimatable, IAnimationTickable {
-    private AnimationFactory factory = new AnimationFactory(this);
+public class EntityCustomModel extends Animal implements IAnimatable, IAnimationTickable {
+    private AnimationFactory factory = GeckoLibUtil.createFactory(this);
     public ResourceLocation modelResLoc=new ResourceLocation("geckolib3", "geo/bike.geo.json");
     public ResourceLocation animResLoc=new ResourceLocation("geckolib3", "bike.animation.json");
     public ResourceLocation textureResLoc = new ResourceLocation("geckolib3", "textures/model/entity/bike.png");
@@ -67,7 +72,7 @@ public class EntityCustomModel extends CreatureEntity implements IAnimatable, IA
         return PlayState.CONTINUE;
     }
 
-    public EntityCustomModel(EntityType<? extends CreatureEntity> type, World worldIn) {
+    public EntityCustomModel(EntityType<? extends Animal> type, Level worldIn) {
         super(type, worldIn);
         this.noCulling = true;
     }
@@ -92,5 +97,11 @@ public class EntityCustomModel extends CreatureEntity implements IAnimatable, IA
     @Override
     public void tick() {
         super.tick();
+    }
+
+    @Nullable
+    @Override
+    public AgeableMob getBreedOffspring(ServerLevel p_146743_, AgeableMob p_146744_) {
+        return null;
     }
 }
