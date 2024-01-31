@@ -6,7 +6,7 @@ license = "All Rights Reserved"
 
 [[mods]]
 modId = "cnpcgeckoaddon"
-version = "1.16.5-1.0.0"
+version = "1.18.2-1.0.0"
 displayName = "CNPC-Gecko-Addon"
 
 #updateJSONURL="http://myurl.me/"
@@ -21,7 +21,7 @@ description = '''
 
 [[dependencies.cnpcgeckoaddon]]
 modId = "minecraft"
-versionRange = "[1.16.5,1.17)"
+versionRange = "[1.18.2,1.19)"
 mandatory = true
 side = "BOTH"
 ordering = "NONE"
