@@ -2,15 +2,12 @@ package com.goodbird.cnpcgeckoaddon.network;
 
 import com.goodbird.cnpcgeckoaddon.entity.EntityCustomModel;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraftforge.network.NetworkEvent;
 import noppes.npcs.entity.EntityCustomNpc;
-import noppes.npcs.shared.common.PacketBasic;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.builder.RawAnimation;
@@ -30,13 +27,13 @@ public class PacketSyncAnimation {
 
     }
 
-    public void encode(PacketBuffer buf) {
+    public void encode(FriendlyByteBuf buf) {
         buf.writeInt(id);
 
-        CompoundNBT compound = new CompoundNBT();
-        ListNBT animList = new ListNBT();
+        CompoundTag compound = new CompoundTag();
+        ListTag animList = new ListTag();
         for(RawAnimation anim: builder.getRawAnimationList()){
-            CompoundNBT animTag = new CompoundNBT();
+            CompoundTag animTag = new CompoundTag();
             animTag.putString("name", anim.animationName);
             if(anim.loopType!=null) {
                 animTag.putInt("loop", ((ILoopType.EDefaultLoopTypes) anim.loopType).ordinal());
@@ -49,13 +46,13 @@ public class PacketSyncAnimation {
         buf.writeNbt(compound);
     }
 
-    public static PacketSyncAnimation decode(PacketBuffer buf) {
+    public static PacketSyncAnimation decode(FriendlyByteBuf buf) {
         int id = buf.readInt();
         AnimationBuilder builder = new AnimationBuilder();
-        CompoundNBT compound = buf.readNbt();
-        ListNBT animList = compound.getList("anims",10);
+        CompoundTag compound = buf.readNbt();
+        ListTag animList = compound.getList("anims",10);
         for(int i=0;i<animList.size();i++){
-            CompoundNBT animTag = (CompoundNBT) animList.get(i);
+            CompoundTag animTag = (CompoundTag) animList.get(i);
             builder.addAnimation(animTag.getString("name"),
                     ILoopType.EDefaultLoopTypes.values()[animTag.getInt("loop")]);
         }
