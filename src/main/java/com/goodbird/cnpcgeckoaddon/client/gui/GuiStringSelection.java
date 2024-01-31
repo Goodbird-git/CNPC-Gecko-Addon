@@ -1,7 +1,7 @@
 package com.goodbird.cnpcgeckoaddon.client.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.screen.Screen;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.screens.Screen;
 import noppes.npcs.client.gui.util.GuiNPCInterface;
 import noppes.npcs.shared.client.gui.components.GuiButtonNop;
 import noppes.npcs.shared.client.gui.components.GuiLabel;
@@ -31,12 +31,12 @@ public class GuiStringSelection extends GuiNPCInterface {
         addLabel(new GuiLabel(0, title, width / 2 - (this.font.width(title) / 2), 20, 0xffffff));
         options.sort(String.CASE_INSENSITIVE_ORDER);
         slot = new GuiStringSlotNop(options, this, false);
-        this.children.add(this.slot);
+        addWidget(this.slot);
         this.addButton(new GuiButtonNop(this, 2, width / 2 - 100, height - 44, 98, 20, "gui.back"));
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         this.slot.render(matrixStack, mouseX, mouseY, partialTicks);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
     }
