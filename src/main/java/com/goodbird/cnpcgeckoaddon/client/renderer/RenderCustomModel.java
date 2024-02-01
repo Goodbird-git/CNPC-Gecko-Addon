@@ -46,7 +46,7 @@ public class RenderCustomModel extends GeoEntityRendererCompat<EntityCustomModel
         if (model.getBone("left_held_item").isPresent()) {
             GeoBone bone = model.getBone("left_held_item").get();
             bone.isHidden = true;
-            if(!animatable.getMainHandItem().isEmpty()) {
+            if(animatable.leftHeldItem!=null && !animatable.leftHeldItem.isEmpty()) {
                 this.renderItem(bone, animatable.leftHeldItem, matrixStackIn, renderTypeBuffer, packedLightIn);
             }
         }
