@@ -1,8 +1,8 @@
 package com.goodbird.cnpcgeckoaddon.entity;
 
-import com.goodbird.cnpcgeckoaddon.mixin.IAnimationController;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -16,24 +16,28 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class EntityCustomModel extends CreatureEntity implements IAnimatable, IAnimationTickable {
-    private AnimationFactory factory = new AnimationFactory(this);
-    public ResourceLocation modelResLoc=new ResourceLocation("geckolib3", "geo/bike.geo.json");
-    public ResourceLocation animResLoc=new ResourceLocation("geckolib3", "bike.animation.json");
+public class EntityCustomModel extends EntityCreature implements IAnimatable, IAnimationTickable {
+    private final AnimationFactory factory = new AnimationFactory(this);
+    public ResourceLocation modelResLoc = new ResourceLocation("geckolib3", "geo/bike.geo.json");
+    public ResourceLocation animResLoc = new ResourceLocation("geckolib3", "animations/bike.animation.json");
     public ResourceLocation textureResLoc = new ResourceLocation("geckolib3", "textures/model/entity/bike.png");
-    public String idleAnim = "";
-    public String walkAnim = "";
-    public String hurtAnim = "";
-    public String attackAnim = "";
+    public String idleAnimName = "";
+    public String walkAnimName = "";
+    public String hurtAnimName = "";
+    public String meleeAttackAnimName = "";
+    public String rangedAttackAnimName = "";
     public AnimationBuilder dialogAnim = null;
     public AnimationBuilder manualAnim = null;
+    public AnimationBuilder attackAnim = null;
+    public AnimationBuilder hurtAnim = null;
     public ItemStack leftHeldItem;
+
     private <E extends IAnimatable> PlayState predicateMovement(AnimationEvent<E> event) {
         if (manualAnim != null) {
             if (event.getController().getAnimationState() == AnimationState.Stopped) {
                 manualAnim = null;
             } else {
-                if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() != manualAnim) {
+                if (event.getController().currentAnimationBuilder != manualAnim) {
                     event.getController().markNeedsReload();
                 }
                 event.getController().setAnimation(manualAnim);
@@ -44,39 +48,39 @@ public class EntityCustomModel extends CreatureEntity implements IAnimatable, IA
             if (event.getController().getAnimationState() == AnimationState.Stopped) {
                 dialogAnim = null;
             } else {
-                if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() != dialogAnim) {
+                if (event.getController().currentAnimationBuilder != dialogAnim) {
                     event.getController().markNeedsReload();
                 }
                 event.getController().setAnimation(dialogAnim);
                 return PlayState.CONTINUE;
             }
         }
-        if (!event.isMoving() || walkAnim.isEmpty()) {
-            if (!idleAnim.isEmpty()) {
-                event.getController().setAnimation(new AnimationBuilder().loop(idleAnim));
+        if (!event.isMoving() || walkAnimName.isEmpty()) {
+            if (!idleAnimName.isEmpty()) {
+                event.getController().setAnimation(new AnimationBuilder().loop(idleAnimName));
             } else {
                 return PlayState.STOP;
             }
         } else {
-            event.getController().setAnimation(new AnimationBuilder().loop(walkAnim));
+            event.getController().setAnimation(new AnimationBuilder().loop(walkAnimName));
         }
         return PlayState.CONTINUE;
     }
 
-    private <E extends IAnimatable> PlayState predicateAttack(AnimationEvent<E> event) {
-        return PlayState.CONTINUE;
+    public void setDialogAnim(String name) {
+        dialogAnim = new AnimationBuilder().playOnce(name);
     }
 
-    public EntityCustomModel(EntityType<? extends CreatureEntity> type, World worldIn) {
-        super(type, worldIn);
-        this.noCulling = true;
+    public EntityCustomModel(World worldIn) {
+        super(worldIn);
+        this.ignoreFrustumCheck = true;
+        this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+        this.setSize(0.7F, 2F);
     }
-
 
     @Override
     public void registerControllers(AnimationData data) {
         data.addAnimationController(new AnimationController<>(this, "movement", 10, this::predicateMovement));
-        data.addAnimationController(new AnimationController<>(this, "attack", 10, this::predicateAttack));
     }
 
     @Override
@@ -86,11 +90,11 @@ public class EntityCustomModel extends CreatureEntity implements IAnimatable, IA
 
     @Override
     public int tickTimer() {
-        return tickCount;
+        return ticksExisted;
     }
 
     @Override
     public void tick() {
-        super.tick();
+        super.onUpdate();
     }
 }
