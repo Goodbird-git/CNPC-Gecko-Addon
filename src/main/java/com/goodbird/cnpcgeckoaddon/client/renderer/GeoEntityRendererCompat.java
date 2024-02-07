@@ -1,135 +1,69 @@
 package com.goodbird.cnpcgeckoaddon.client.renderer;
 
 import com.goodbird.cnpcgeckoaddon.client.model.DummyVanilaModel;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import com.mojang.blaze3d.vertex.VertexBuilderUtils;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import com.google.common.collect.Lists;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.LivingRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderLiving;
+import net.minecraft.client.renderer.entity.RenderLivingBase;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerModelPart;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
+import net.minecraft.entity.EntityHanging;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EnumPlayerModelParts;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Matrix3f;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.LightType;
-import net.minecraftforge.fml.ModList;
-import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.util.Color;
-import software.bernie.geckolib3.geo.render.built.GeoBone;
-import software.bernie.geckolib3.geo.render.built.GeoCube;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
+import software.bernie.geckolib3.renderers.geo.RenderHurtColor;
 import software.bernie.geckolib3.util.AnimationUtils;
-import software.bernie.geckolib3.util.EModelRenderCycle;
-import software.bernie.geckolib3.util.IRenderCycle;
-import software.bernie.geckolib3.util.RenderUtils;
+import software.bernie.shadowed.eliotlash.mclib.utils.Interpolations;
 
-import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
-public abstract class GeoEntityRendererCompat<T extends LivingEntity & IAnimatable> extends LivingRenderer<T, DummyVanilaModel<T>>
-        implements IGeoRenderer<T> {
-    static {
-        AnimationController.addModelFetcher((IAnimatable object) -> {
-            if (object instanceof Entity) {
-                return (IAnimatableModel<Object>) AnimationUtils.getGeoModelForEntity((Entity) object);
-            }
-            return null;
-        });
-    }
-
+public abstract class GeoEntityRendererCompat<T extends EntityLivingBase & IAnimatable> extends RenderLivingBase<T> implements IGeoRenderer<T> {
     protected final AnimatedGeoModel<T> modelProvider;
-    protected final List<GeoLayerRenderer<T>> layerRenderers = new ObjectArrayList<>();
-    protected Matrix4f dispatchedMat = new Matrix4f();
-    protected Matrix4f renderEarlyMat = new Matrix4f();
-    protected T animatable;
+    protected final List<GeoLayerRenderer<T>> layerRenderers = Lists.newArrayList();
 
-    public ItemStack mainHand;
-    public ItemStack offHand;
-    public ItemStack helmet;
-    public ItemStack chestplate;
-    public ItemStack leggings;
-    public ItemStack boots;
-    public IRenderTypeBuffer rtb;
-    public ResourceLocation whTexture;
-    protected float widthScale = 1;
-    protected float heightScale = 1;
-
-    public GeoEntityRendererCompat(EntityRendererManager renderManager, AnimatedGeoModel<T> modelProvider) {
-        super(renderManager, new DummyVanilaModel<T>(),1);
+    public GeoEntityRendererCompat(RenderManager renderManager, AnimatedGeoModel<T> modelProvider) {
+        super(renderManager, new DummyVanilaModel(),0);
         this.modelProvider = modelProvider;
     }
 
-    /*
-     * 0 => Normal model 1 => Magical armor overlay
-     */
-    private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
-
-    @Override
-    @Nonnull
-    public IRenderCycle getCurrentModelRenderCycle() {
-        return this.currentModelRenderCycle;
-    }
-
-    @Override
-    public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
-        this.currentModelRenderCycle = currentModelRenderCycle;
-    }
-
-    @Override
-    public void render(T entity, float entityYaw, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn,
-                       int packedLightIn) {
-        this.dispatchedMat = stack.last().pose().copy();
-        this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
-        stack.pushPose();
-        if (entity instanceof MobEntity) {
-            Entity leashHolder = ((MobEntity) entity).getLeashHolder();
-            if (leashHolder != null) {
-                this.renderLeash(entity, partialTicks, stack, bufferIn, leashHolder);
-            }
-        }
-        boolean shouldSit = entity.isPassenger()
-                && (entity.getVehicle() != null && entity.getVehicle().shouldRiderSit());
+    public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x, y, z);
+        boolean shouldSit = entity.getRidingEntity() != null && entity.getRidingEntity().shouldRiderSit();
         EntityModelData entityModelData = new EntityModelData();
         entityModelData.isSitting = shouldSit;
-        entityModelData.isChild = entity.isBaby();
-
-        float f = MathHelper.rotLerp(partialTicks, entity.yBodyRotO, entity.yBodyRot);
-        float f1 = MathHelper.rotLerp(partialTicks, entity.yHeadRotO, entity.yHeadRot);
+        entityModelData.isChild = entity.isChild();
+        float f = Interpolations.lerpYaw(entity.prevRenderYawOffset, entity.renderYawOffset, partialTicks);
+        float f1 = Interpolations.lerpYaw(entity.prevRotationYawHead, entity.rotationYawHead, partialTicks);
         float netHeadYaw = f1 - f;
-        if (shouldSit && entity.getVehicle() instanceof LivingEntity) {
-            LivingEntity livingentity = (LivingEntity) entity.getVehicle();
-            f = MathHelper.rotLerp(partialTicks, livingentity.yBodyRotO, livingentity.yBodyRot);
+        float f3;
+        if (shouldSit && entity.getRidingEntity() instanceof EntityLivingBase) {
+            EntityLivingBase livingentity = (EntityLivingBase)entity.getRidingEntity();
+            f = Interpolations.lerpYaw(livingentity.prevRenderYawOffset, livingentity.renderYawOffset, partialTicks);
             netHeadYaw = f1 - f;
-            float f3 = MathHelper.wrapDegrees(netHeadYaw);
+            f3 = MathHelper.wrapDegrees(netHeadYaw);
             if (f3 < -85.0F) {
                 f3 = -85.0F;
             }
@@ -146,24 +80,15 @@ public abstract class GeoEntityRendererCompat<T extends LivingEntity & IAnimatab
             netHeadYaw = f1 - f;
         }
 
-        float headPitch = MathHelper.lerp(partialTicks, entity.xRotO, entity.xRot);
-        if (entity.getPose() == Pose.SLEEPING) {
-            Direction direction = entity.getBedOrientation();
-            if (direction != null) {
-                float f4 = entity.getEyeHeight(Pose.STANDING) - 0.1F;
-                stack.translate((double) ((float) (-direction.getStepX()) * f4), 0.0D,
-                        (double) ((float) (-direction.getStepZ()) * f4));
-            }
-        }
-        float f7 = this.handleRotationFloat(entity, partialTicks);
-        this.applyRotations(entity, stack, f7, f, partialTicks);
-
+        float headPitch = Interpolations.lerp(entity.prevRotationPitch, entity.rotationPitch, partialTicks);
+        f3 = this.handleRotationFloat(entity, partialTicks);
+        this.applyRotations(entity, f3, f, partialTicks);
         float limbSwingAmount = 0.0F;
         float limbSwing = 0.0F;
-        if (!shouldSit && entity.isAlive()) {
-            limbSwingAmount = MathHelper.lerp(partialTicks, entity.animationSpeedOld, entity.animationSpeed);
-            limbSwing = entity.animationPosition - entity.animationSpeed * (1.0F - partialTicks);
-            if (entity.isBaby()) {
+        if (!shouldSit && entity.isEntityAlive()) {
+            limbSwingAmount = Interpolations.lerp(entity.prevLimbSwingAmount, entity.limbSwingAmount, partialTicks);
+            limbSwing = entity.limbSwing - entity.limbSwingAmount * (1.0F - partialTicks);
+            if (entity.isChild()) {
                 limbSwing *= 3.0F;
             }
 
@@ -171,222 +96,74 @@ public abstract class GeoEntityRendererCompat<T extends LivingEntity & IAnimatab
                 limbSwingAmount = 1.0F;
             }
         }
+
         entityModelData.headPitch = -headPitch;
         entityModelData.netHeadYaw = -netHeadYaw;
-
-        AnimationEvent<T> predicate = new AnimationEvent<T>(entity, limbSwing, limbSwingAmount, partialTicks,
-                !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F), Collections.singletonList(entityModelData));
-        GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entity));
-        if (modelProvider instanceof IAnimatableModel) {
-            ((IAnimatableModel<T>) modelProvider).setCustomAnimations(entity, this.getUniqueID(entity), predicate);
+        AnimationEvent predicate = new AnimationEvent((IAnimatable)entity, limbSwing, limbSwingAmount, partialTicks, !(limbSwingAmount > -0.15F) || !(limbSwingAmount < 0.15F), Collections.singletonList(entityModelData));
+        GeoModel model = this.modelProvider.getModel(this.modelProvider.getModelLocation(entity));
+        if (this.modelProvider instanceof IAnimatableModel) {
+            this.modelProvider.setLivingAnimations(entity, this.getUniqueID(entity), predicate);
         }
 
-        stack.translate(0, 0.01f, 0);
-        Minecraft.getInstance().textureManager.bind(getTextureLocation(entity));
-        Color renderColor = getRenderColor(entity, partialTicks, stack, bufferIn, null, packedLightIn);
-        RenderType renderType = getRenderType(entity, partialTicks, stack, bufferIn, null, packedLightIn,
-                getTextureLocation(entity));
-        if (!entity.isInvisibleTo(Minecraft.getInstance().player)) {
-            IVertexBuilder glintBuffer = bufferIn.getBuffer(RenderType.entityGlintDirect());
-            IVertexBuilder translucentBuffer = bufferIn
-                    .getBuffer(RenderType.entityTranslucentCull(getTextureLocation(entity)));
-            render(model, entity, partialTicks, renderType, stack, bufferIn,
-                    glintBuffer != translucentBuffer ? VertexBuilderUtils.create(glintBuffer, translucentBuffer) : null,
-                    packedLightIn, getOverlay(entity, 0), (float) renderColor.getRed() / 255f,
-                    (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
-                    (float) renderColor.getAlpha() / 255);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0.0F, 0.01F, 0.0F);
+        Minecraft.getMinecraft().renderEngine.bindTexture(this.getEntityTexture(entity));
+        Color renderColor = this.getRenderColor(entity, partialTicks);
+        boolean flag = this.setDoRenderBrightness(entity, partialTicks);
+        if (!entity.isInvisibleToPlayer(Minecraft.getMinecraft().player)) {
+            this.render(model, entity, partialTicks, (float)renderColor.getRed() / 255.0F, (float)renderColor.getBlue() / 255.0F, (float)renderColor.getGreen() / 255.0F, (float)renderColor.getAlpha() / 255.0F);
         }
 
-        if (!entity.isSpectator()) {
-            for (GeoLayerRenderer<T> layerRenderer : this.layerRenderers) {
-                this.renderLayer(stack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks, f7,
-                        netHeadYaw, headPitch, bufferIn, layerRenderer);
-            }
-        }
-        if (ModList.get().isLoaded("patchouli")) {
-            PatchouliCompat.patchouliLoaded(stack);
-        }
-        stack.popPose();
-        super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
-    }
+        if (!(entity instanceof EntityPlayer) || !((EntityPlayer)entity).isSpectator()) {
+            Iterator var23 = this.layerRenderers.iterator();
 
-    protected void renderLayer(MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn, T entity,
-                               float limbSwing, float limbSwingAmount, float partialTicks, float rotFloat, float netHeadYaw,
-                               float headPitch, IRenderTypeBuffer bufferIn2, GeoLayerRenderer<T> layerRenderer) {
-        layerRenderer.render(stack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks, rotFloat,
-                netHeadYaw, headPitch);
-    }
-
-    @Override
-    public Integer getUniqueID(T animatable) {
-        return animatable.getUUID().hashCode();
-    }
-
-    @Override
-    public void renderEarly(T animatable, MatrixStack stackIn, float ticks, IRenderTypeBuffer renderTypeBuffer,
-                            IVertexBuilder vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
-                            float partialTicks) {
-        renderEarlyMat = stackIn.last().pose().copy();
-        this.animatable = animatable;
-        this.mainHand = animatable.getItemBySlot(EquipmentSlotType.MAINHAND);
-        this.offHand = animatable.getItemBySlot(EquipmentSlotType.OFFHAND);
-        this.helmet = animatable.getItemBySlot(EquipmentSlotType.HEAD);
-        this.chestplate = animatable.getItemBySlot(EquipmentSlotType.CHEST);
-        this.leggings = animatable.getItemBySlot(EquipmentSlotType.LEGS);
-        this.boots = animatable.getItemBySlot(EquipmentSlotType.FEET);
-        this.rtb = renderTypeBuffer;
-        this.whTexture = this.getTextureLocation(animatable);
-        IGeoRenderer.super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn,
-                packedOverlayIn, red, green, blue, partialTicks);
-    }
-
-    @Override
-    public void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
-                                  int packedOverlayIn, float red, float green, float blue, float alpha) {
-        stack.pushPose();
-        boolean rotOverride = bone.rotMat != null;
-        RenderUtils.translate(bone, stack);
-        RenderUtils.moveToPivot(bone, stack);
-        if (rotOverride) {
-            stack.last().pose().multiply(bone.rotMat);
-            stack.last().normal().mul(new Matrix3f(bone.rotMat));
-        } else {
-            RenderUtils.rotate(bone, stack);
-        }
-        RenderUtils.scale(bone, stack);
-        if (bone.isTrackingXform()) {
-            MatrixStack.Entry entry = stack.last();
-            Matrix4f boneMat = entry.pose().copy();
-
-            // Model space
-            Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
-            renderEarlyMatInvert.invert();
-            Matrix4f modelPosBoneMat = boneMat.copy();
-            modelPosBoneMat.multiplyBackward(renderEarlyMatInvert);
-            bone.setModelSpaceXform(modelPosBoneMat);
-
-            // Local space
-            Matrix4f dispatchedMatInvert = this.dispatchedMat.copy();
-            dispatchedMatInvert.invert();
-            Matrix4f localPosBoneMat = boneMat.copy();
-            localPosBoneMat.multiplyBackward(dispatchedMatInvert);
-            // (Offset is the only transform we may want to preserve from the dispatched mat)
-            Vector3d renderOffset = this.getRenderOffset(animatable, 1.0F);
-            localPosBoneMat.translate(new Vector3f((float) renderOffset.x(), (float) renderOffset.y(), (float) renderOffset.z()));
-            bone.setLocalSpaceXform(localPosBoneMat);
-
-            // World space
-            Matrix4f worldPosBoneMat = localPosBoneMat.copy();
-            worldPosBoneMat.translate(new Vector3f((float) animatable.getX(), (float) animatable.getY(), (float) animatable.getZ()));
-            bone.setWorldSpaceXform(worldPosBoneMat);
-        }
-        RenderUtils.moveBackFromPivot(bone, stack);
-        if (!bone.isHidden) {
-            Iterator<?> var10 = bone.childCubes.iterator();
-
-            while (var10.hasNext()) {
-                GeoCube cube = (GeoCube) var10.next();
-                stack.pushPose();
-                if (!bone.cubesAreHidden()) {
-                    this.renderCube(cube, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-                }
-                stack.popPose();
-            }
-        }
-        if (!bone.childBonesAreHiddenToo()) {
-            Iterator<?> var10 = bone.childBones.iterator();
-
-            while (var10.hasNext()) {
-                GeoBone childBone = (GeoBone) var10.next();
-                this.renderRecursively(childBone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue,
-                        alpha);
+            while(var23.hasNext()) {
+                GeoLayerRenderer<T> layerRenderer = (GeoLayerRenderer)var23.next();
+                layerRenderer.render(entity, limbSwing, limbSwingAmount, partialTicks, limbSwing, netHeadYaw, headPitch, renderColor);
             }
         }
 
-        stack.popPose();
+        if (entity instanceof EntityLiving) {
+            Entity leashHolder = ((EntityLiving)entity).getLeashHolder();
+            if (leashHolder != null) {
+                this.renderLeash((EntityLiving)entity, x, y, z, entityYaw, partialTicks);
+            }
+        }
+
+        if (flag) {
+            RenderHurtColor.unset();
+        }
+
+        GlStateManager.popMatrix();
+        GlStateManager.popMatrix();
     }
 
-    @Override
-    public void preparePositionRotationScale(GeoBone bone, MatrixStack stack) {
-        boolean rotOverride = bone.rotMat != null;
-        RenderUtils.translate(bone, stack);
-        RenderUtils.moveToPivot(bone, stack);
-        if (rotOverride) {
-            stack.last().pose().multiply(bone.rotMat);
-            stack.last().normal().mul(new Matrix3f(bone.rotMat));
-        } else {
-            RenderUtils.rotate(bone, stack);
-        }
-        RenderUtils.scale(bone, stack);
-        if (bone.isTrackingXform()) {
-            MatrixStack.Entry entry = stack.last();
-            Matrix4f matBone = entry.pose().copy();
-            bone.setWorldSpaceXform(matBone.copy());
-
-            Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
-            renderEarlyMatInvert.invert();
-            matBone.multiplyBackward(renderEarlyMatInvert);
-            bone.setModelSpaceXform(matBone);
-        }
-        RenderUtils.moveBackFromPivot(bone, stack);
+    public ResourceLocation getEntityTexture(T entity) {
+        return this.getTextureLocation(entity);
     }
 
-    @Override
-    public GeoModelProvider<T> getGeoModelProvider() {
+    public GeoModelProvider getGeoModelProvider() {
         return this.modelProvider;
     }
 
-    @Override
-    public float getWidthScale(T animatable2) {
-        return this.widthScale;
-    }
-
-    @Override
-    public float getHeightScale(T entity) {
-        return this.heightScale;
-    }
-
-    public int getOverlay(T entity, float u) {
-        return OverlayTexture.pack(OverlayTexture.u(u),
-                OverlayTexture.v(entity.hurtTime > 0 || entity.deathTime > 0));
-    }
-
-    @Deprecated()
-    public int getPackedOverlay(LivingEntity entity, float u) {
-        return this.getOverlay(animatable, u);
-    }
-
-    protected void applyRotations(T entityLiving, MatrixStack matrixStackIn, float ageInTicks, float rotationYaw,
-                                  float partialTicks) {
-        Pose pose = entityLiving.getPose();
-        if (pose != Pose.SLEEPING) {
-            matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0F - rotationYaw));
+    protected void applyRotations(T entityLiving, float ageInTicks, float rotationYaw, float partialTicks) {
+        if (!entityLiving.isPlayerSleeping()) {
+            GlStateManager.rotate(180.0F - rotationYaw, 0.0F, 1.0F, 0.0F);
         }
 
         if (entityLiving.deathTime > 0) {
-            float f = ((float) entityLiving.deathTime + partialTicks - 1.0F) / 20.0F * 1.6F;
+            float f = ((float)entityLiving.deathTime + partialTicks - 1.0F) / 20.0F * 1.6F;
             f = MathHelper.sqrt(f);
             if (f > 1.0F) {
                 f = 1.0F;
             }
 
-            matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(f * this.getDeathMaxRotation(entityLiving)));
-        } else if (entityLiving.isAutoSpinAttack()) {
-            matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(-90.0F - entityLiving.xRot));
-            matrixStackIn
-                    .mulPose(Vector3f.YP.rotationDegrees(((float) entityLiving.tickCount + partialTicks) * -75.0F));
-        } else if (pose == Pose.SLEEPING) {
-            Direction direction = entityLiving.getBedOrientation();
-            float f1 = direction != null ? getFacingAngle(direction) : rotationYaw;
-            matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(f1));
-            matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(this.getDeathMaxRotation(entityLiving)));
-            matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(270.0F));
-        } else if (entityLiving.hasCustomName() || entityLiving instanceof PlayerEntity) {
-            String s = TextFormatting.stripFormatting(entityLiving.getName().getString());
-            if (("Dinnerbone".equals(s) || "Grumm".equals(s)) && (!(entityLiving instanceof PlayerEntity)
-                    || ((PlayerEntity) entityLiving).isModelPartShown(PlayerModelPart.CAPE))) {
-                matrixStackIn.translate(0.0D, (double) (entityLiving.getBbHeight() + 0.1F), 0.0D);
-                matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(180.0F));
+            GlStateManager.rotate(f * this.getDeathMaxRotation(entityLiving), 0.0F, 0.0F, 1.0F);
+        } else if (entityLiving.hasCustomName() || entityLiving instanceof EntityPlayer) {
+            String s = TextFormatting.getTextWithoutFormattingCodes(entityLiving.getName());
+            if (("Dinnerbone".equals(s) || "Grumm".equals(s)) && (!(entityLiving instanceof EntityPlayer) || ((EntityPlayer)entityLiving).isWearing(EnumPlayerModelParts.CAPE))) {
+                GlStateManager.translate(0.0, (double)(entityLiving.height + 0.1F), 0.0);
+                GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
             }
         }
 
@@ -396,7 +173,7 @@ public abstract class GeoEntityRendererCompat<T extends LivingEntity & IAnimatab
         return !livingEntityIn.isInvisible();
     }
 
-    private static float getFacingAngle(Direction facingIn) {
+    private static float getFacingAngle(EnumFacing facingIn) {
         switch (facingIn) {
             case SOUTH:
                 return 90.0F;
@@ -411,38 +188,22 @@ public abstract class GeoEntityRendererCompat<T extends LivingEntity & IAnimatab
         }
     }
 
+    public Integer getUniqueID(T animatable) {
+        return animatable.getUniqueID().hashCode();
+    }
+
     protected float getDeathMaxRotation(T entityLivingBaseIn) {
         return 90.0F;
     }
 
-    @Override
-    public boolean shouldShowName(T entity) {
-        double d0 = this.entityRenderDispatcher.distanceToSqr(entity);
-        float f = entity.isDiscrete() ? 32.0F : 64.0F;
-        if (d0 >= (double) (f * f)) {
-            return false;
-        } else {
-            return entity == this.entityRenderDispatcher.crosshairPickEntity && entity.hasCustomName()
-                    && Minecraft.renderNames();
-        }
-    }
-
-    /**
-     * Returns where in the swing animation the living entity is (from 0 to 1). Args
-     * : entity, partialTickTime
-     */
     protected float getSwingProgress(T livingBase, float partialTickTime) {
-        return livingBase.getAttackAnim(partialTickTime);
+        return livingBase.getSwingProgress(partialTickTime);
     }
 
-    /**
-     * Defines what float the third param in setRotationAngles of ModelBase is
-     */
     protected float handleRotationFloat(T livingBase, float partialTicks) {
-        return (float) livingBase.tickCount + partialTicks;
+        return (float)livingBase.ticksExisted + partialTicks;
     }
 
-    @Override
     public ResourceLocation getTextureLocation(T instance) {
         return this.modelProvider.getTextureLocation(instance);
     }
@@ -451,70 +212,100 @@ public abstract class GeoEntityRendererCompat<T extends LivingEntity & IAnimatab
         return this.layerRenderers.add(layer);
     }
 
-    public <E extends Entity> void renderLeash(T entity, float partialTicks, MatrixStack poseStack,
-                                               IRenderTypeBuffer buffer, E leashHolder) {
-        int u;
-        poseStack.pushPose();
-        Vector3d vec3d = leashHolder.getRopeHoldPosition(partialTicks);
-        double d = (double) (MathHelper.lerp(partialTicks, entity.yBodyRot, entity.yBodyRotO) * ((float) Math.PI / 180))
-                + 1.5707963267948966;
-        Vector3d vec3d2 = ((Entity) entity).getLeashOffset();
-        double e = Math.cos(d) * vec3d2.z + Math.sin(d) * vec3d2.x;
-        double f = Math.sin(d) * vec3d2.z - Math.cos(d) * vec3d2.x;
-        double g = MathHelper.lerp(partialTicks, entity.xo, entity.getX()) + e;
-        double h = MathHelper.lerp(partialTicks, entity.yo, entity.getY()) + vec3d2.y;
-        double i = MathHelper.lerp(partialTicks, entity.zo, entity.getZ()) + f;
-        poseStack.translate(e, vec3d2.y, f);
-        float j = (float) (vec3d.x - g);
-        float k = (float) (vec3d.y - h);
-        float l = (float) (vec3d.z - i);
-        IVertexBuilder vertexConsumer = buffer.getBuffer(RenderType.leash());
-        Matrix4f matrix4f = poseStack.last().pose();
-        float n = MathHelper.fastInvSqrt(j * j + l * l) * 0.025f / 2.0f;
-        float o = l * n;
-        float p = j * n;
-        BlockPos blockPos = new BlockPos(entity.getEyePosition(partialTicks));
-        BlockPos blockPos2 = new BlockPos(leashHolder.getEyePosition(partialTicks));
-        int q = this.getBlockLightLevel(entity, blockPos);
-        int r = leashHolder.isOnFire() ? 15 : leashHolder.level.getBrightness(LightType.BLOCK, blockPos2);
-        int s = entity.level.getBrightness(LightType.SKY, blockPos);
-        int t = entity.level.getBrightness(LightType.SKY, blockPos2);
-        for (u = 0; u <= 24; ++u) {
-            GeoEntityRendererCompat.renderLeashPiece(vertexConsumer, matrix4f, j, k, l, q, r, s, t, 0.025f, 0.025f, o, p, u,
-                    false);
+    protected boolean setDoRenderBrightness(T entityLivingBaseIn, float partialTicks) {
+        return RenderHurtColor.set(entityLivingBaseIn, partialTicks);
+    }
+
+    protected void renderLeash(EntityLiving entityLivingIn, double x, double y, double z, float entityYaw, float partialTicks) {
+        Entity entity = entityLivingIn.getLeashHolder();
+        if (entity != null) {
+            y -= (1.6 - (double)entityLivingIn.height) * 0.5;
+            Tessellator tessellator = Tessellator.getInstance();
+            BufferBuilder bufferbuilder = tessellator.getBuffer();
+            double d0 = this.interpolateValue((double)entity.prevRotationYaw, (double)entity.rotationYaw, (double)(partialTicks * 0.5F)) * 0.01745329238474369;
+            double d1 = this.interpolateValue((double)entity.prevRotationPitch, (double)entity.rotationPitch, (double)(partialTicks * 0.5F)) * 0.01745329238474369;
+            double d2 = Math.cos(d0);
+            double d3 = Math.sin(d0);
+            double d4 = Math.sin(d1);
+            if (entity instanceof EntityHanging) {
+                d2 = 0.0;
+                d3 = 0.0;
+                d4 = -1.0;
+            }
+
+            double d5 = Math.cos(d1);
+            double d6 = this.interpolateValue(entity.prevPosX, entity.posX, (double)partialTicks) - d2 * 0.7 - d3 * 0.5 * d5;
+            double d7 = this.interpolateValue(entity.prevPosY + (double)entity.getEyeHeight() * 0.7, entity.posY + (double)entity.getEyeHeight() * 0.7, (double)partialTicks) - d4 * 0.5 - 0.25;
+            double d8 = this.interpolateValue(entity.prevPosZ, entity.posZ, (double)partialTicks) - d3 * 0.7 + d2 * 0.5 * d5;
+            double d9 = this.interpolateValue((double)entityLivingIn.prevRenderYawOffset, (double)entityLivingIn.renderYawOffset, (double)partialTicks) * 0.01745329238474369 + 1.5707963267948966;
+            d2 = Math.cos(d9) * (double)entityLivingIn.width * 0.4;
+            d3 = Math.sin(d9) * (double)entityLivingIn.width * 0.4;
+            double d10 = this.interpolateValue(entityLivingIn.prevPosX, entityLivingIn.posX, (double)partialTicks) + d2;
+            double d11 = this.interpolateValue(entityLivingIn.prevPosY, entityLivingIn.posY, (double)partialTicks);
+            double d12 = this.interpolateValue(entityLivingIn.prevPosZ, entityLivingIn.posZ, (double)partialTicks) + d3;
+            x += d2;
+            z += d3;
+            double d13 = (double)((float)(d6 - d10));
+            double d14 = (double)((float)(d7 - d11));
+            double d15 = (double)((float)(d8 - d12));
+            GlStateManager.disableTexture2D();
+            GlStateManager.disableLighting();
+            GlStateManager.disableCull();
+            bufferbuilder.begin(5, DefaultVertexFormats.POSITION_COLOR);
+
+            int k;
+            float f4;
+            float f5;
+            float f6;
+            float f7;
+            for(k = 0; k <= 24; ++k) {
+                f4 = 0.5F;
+                f5 = 0.4F;
+                f6 = 0.3F;
+                if (k % 2 == 0) {
+                    f4 *= 0.7F;
+                    f5 *= 0.7F;
+                    f6 *= 0.7F;
+                }
+
+                f7 = (float)k / 24.0F;
+                bufferbuilder.pos(x + d13 * (double)f7 + 0.0, y + d14 * (double)(f7 * f7 + f7) * 0.5 + (double)((24.0F - (float)k) / 18.0F + 0.125F), z + d15 * (double)f7).color(f4, f5, f6, 1.0F).endVertex();
+                bufferbuilder.pos(x + d13 * (double)f7 + 0.025, y + d14 * (double)(f7 * f7 + f7) * 0.5 + (double)((24.0F - (float)k) / 18.0F + 0.125F) + 0.025, z + d15 * (double)f7).color(f4, f5, f6, 1.0F).endVertex();
+            }
+
+            tessellator.draw();
+            bufferbuilder.begin(5, DefaultVertexFormats.POSITION_COLOR);
+
+            for(k = 0; k <= 24; ++k) {
+                f4 = 0.5F;
+                f5 = 0.4F;
+                f6 = 0.3F;
+                if (k % 2 == 0) {
+                    f4 *= 0.7F;
+                    f5 *= 0.7F;
+                    f6 *= 0.7F;
+                }
+
+                f7 = (float)k / 24.0F;
+                bufferbuilder.pos(x + d13 * (double)f7 + 0.0, y + d14 * (double)(f7 * f7 + f7) * 0.5 + (double)((24.0F - (float)k) / 18.0F + 0.125F) + 0.025, z + d15 * (double)f7).color(f4, f5, f6, 1.0F).endVertex();
+                bufferbuilder.pos(x + d13 * (double)f7 + 0.025, y + d14 * (double)(f7 * f7 + f7) * 0.5 + (double)((24.0F - (float)k) / 18.0F + 0.125F), z + d15 * (double)f7 + 0.025).color(f4, f5, f6, 1.0F).endVertex();
+            }
+
+            tessellator.draw();
+            GlStateManager.enableLighting();
+            GlStateManager.enableTexture2D();
+            GlStateManager.enableCull();
         }
-        for (u = 24; u >= 0; --u) {
-            GeoEntityRendererCompat.renderLeashPiece(vertexConsumer, matrix4f, j, k, l, q, r, s, t, 0.025f, 0.0f, o, p, u,
-                    true);
-        }
-        poseStack.popPose();
+
     }
 
-    private static void renderLeashPiece(IVertexBuilder vertexConsumer, Matrix4f positionMatrix, float f, float g,
-                                         float h, int leashedEntityBlockLight, int holdingEntityBlockLight, int leashedEntitySkyLight,
-                                         int holdingEntitySkyLight, float i, float j, float k, float l, int pieceIndex, boolean isLeashKnot) {
-        float m = (float) pieceIndex / 24.0f;
-        int n = (int) MathHelper.lerp(m, leashedEntityBlockLight, holdingEntityBlockLight);
-        int o = (int) MathHelper.lerp(m, leashedEntitySkyLight, holdingEntitySkyLight);
-        int p = LightTexture.pack(n, o);
-        float q = pieceIndex % 2 == (isLeashKnot ? 1 : 0) ? 0.7f : 1.0f;
-        float r = 0.5f * q;
-        float s = 0.4f * q;
-        float t = 0.3f * q;
-        float u = f * m;
-        float v = g > 0.0f ? g * m * m : g - g * (1.0f - m) * (1.0f - m);
-        float w = h * m;
-        vertexConsumer.vertex(positionMatrix, u - k, v + j, w + l).color(r, s, t, 1.0f).uv2(p).endVertex();
-        vertexConsumer.vertex(positionMatrix, u + k, v + i - j, w - l).color(r, s, t, 1.0f).uv2(p).endVertex();
+    private double interpolateValue(double start, double end, double pct) {
+        return start + (end - start) * pct;
     }
 
-    @Override
-    public void setCurrentRTB(IRenderTypeBuffer rtb) {
-        this.rtb = rtb;
-    }
-
-    @Override
-    public IRenderTypeBuffer getCurrentRTB() {
-        return this.rtb;
+    static {
+        AnimationController.addModelFetcher((object) -> {
+            return object instanceof Entity ? (IAnimatableModel)AnimationUtils.getGeoModelForEntity((Entity)object) : null;
+        });
     }
 }
