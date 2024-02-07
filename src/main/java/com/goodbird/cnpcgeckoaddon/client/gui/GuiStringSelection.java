@@ -1,23 +1,24 @@
 package com.goodbird.cnpcgeckoaddon.client.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.screen.Screen;
-import noppes.npcs.client.gui.util.GuiNPCInterface;
-import noppes.npcs.shared.client.gui.components.GuiButtonNop;
-import noppes.npcs.shared.client.gui.components.GuiLabel;
-import noppes.npcs.shared.client.gui.components.GuiStringSlotNop;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import noppes.npcs.client.NoppesUtil;
+import noppes.npcs.client.gui.util.GuiNPCStringSlot;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class GuiStringSelection extends GuiNPCInterface {
-    public GuiStringSlotNop slot;
+public class GuiStringSelection extends SubGuiInterface {
+    public GuiNPCStringSlot slot;
     public Consumer<String> action;
-    public Screen parent;
     public String title;
     public List<String> options;
 
-    public GuiStringSelection(Screen parent, String title, List<String> options, Consumer<String> action) {
+    public GuiStringSelection(GuiScreen parent, String title, List<String> options, Consumer<String> action) {
         drawDefaultBackground = false;
         this.parent = parent;
         this.action = action;
@@ -26,32 +27,40 @@ public class GuiStringSelection extends GuiNPCInterface {
     }
 
     @Override
-    public void init() {
-        super.init();
-        addLabel(new GuiLabel(0, title, width / 2 - (this.font.width(title) / 2), 20, 0xffffff));
+    public void initGui() {
+        super.initGui();
+        addLabel(new GuiNpcLabel(0, title, width / 2 - (this.fontRenderer.getStringWidth(title) / 2), 20, 0xffffff));
         options.sort(String.CASE_INSENSITIVE_ORDER);
-        slot = new GuiStringSlotNop(options, this, false);
-        this.children.add(this.slot);
-        this.addButton(new GuiButtonNop(this, 2, width / 2 - 100, height - 44, 98, 20, "gui.back"));
+        slot = new GuiNPCStringSlot(options, this, false, 18);
+        slot.registerScrollButtons(4, 5);
+        this.addButton(new GuiNpcButton(2, width / 2 - 100, height - 44, 98, 20, "gui.back"));
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        this.slot.render(matrixStack, mouseX, mouseY, partialTicks);
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
+    public void drawScreen(int i, int j, float f) {
+        slot.drawScreen(i, j, f);
+        super.drawScreen(i, j, f);
+    }
+
+    @Override
+    public void handleMouseInput() throws IOException {
+        slot.handleMouseInput();
+        super.handleMouseInput();
     }
 
     @Override
     public void doubleClicked() {
-        action.accept(slot.getSelectedString());
+        action.accept(slot.selected);
         close();
+        NoppesUtil.openGUI(this.player,parent);
     }
 
     @Override
-    public void buttonEvent(GuiButtonNop guibutton) {
+    protected void actionPerformed(GuiButton guibutton) {
         int id = guibutton.id;
         if (id == 2) {
             close();
+            NoppesUtil.openGUI(this.player,parent);
         }
     }
 }

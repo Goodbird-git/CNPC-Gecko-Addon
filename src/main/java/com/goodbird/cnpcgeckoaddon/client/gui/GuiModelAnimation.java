@@ -1,67 +1,79 @@
 package com.goodbird.cnpcgeckoaddon.client.gui;
 
-import com.goodbird.cnpcgeckoaddon.data.CustomModelData;
-import com.goodbird.cnpcgeckoaddon.mixin.IDataDisplay;
-import net.minecraft.util.ResourceLocation;
-import noppes.npcs.client.gui.util.GuiNPCInterface;
-import noppes.npcs.entity.EntityNPCInterface;
-import noppes.npcs.shared.client.gui.components.GuiButtonNop;
-import noppes.npcs.shared.client.gui.components.GuiLabel;
-import noppes.npcs.shared.client.gui.components.GuiTextFieldNop;
-import noppes.npcs.shared.client.gui.listeners.ITextfieldListener;
+import com.goodbird.cnpcgeckoaddon.data.CustomModelDataProvider;
+import com.goodbird.cnpcgeckoaddon.data.ICustomModelData;
 import com.goodbird.cnpcgeckoaddon.utils.AnimationFileUtil;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.ResourceLocation;
+import noppes.npcs.client.NoppesUtil;
+import noppes.npcs.client.gui.util.*;
+import noppes.npcs.entity.EntityNPCInterface;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 
-public class GuiModelAnimation extends GuiNPCInterface implements ITextfieldListener {
+public class GuiModelAnimation extends SubGuiInterface implements ITextfieldListener, ISubGuiListener {
+    public GuiModelAnimation(GuiScreen parent, EntityNPCInterface npc){
+        this.npc = npc;
+        closeOnEsc = true;
+        this.parent = parent;
+    }
 
     @Override
-    public void init() {
-        super.init();
+    public void initGui() {
+        super.initGui();
         int y = guiTop + 44;
         addSelectionBlock(1,y,"Animation File:",getModelData(npc).getAnimFile());
         addSelectionBlock(2,y+=23,"Idle:",getModelData(npc).getIdleAnim());
-        addSelectionBlock(3,y+=23,"Walk:",getModelData(npc).getWalkAnim());
-//        addSelectionBlock(4,y+=23,"Attack:",getModelData(npc).getAttackAnim()); COMMING SOON
-//        addSelectionBlock(5,y+23,"Hurt:",getModelData(npc).getHurtAnim()); COMMING SOON
-        this.addButton(new GuiButtonNop(this, 670, width - 22, 2, 20, 20, "X"));
+        addSelectionBlock(3,y+23,"Walk:",getModelData(npc).getWalkAnim());
+//        addSelectionBlock(4,y+=23,"Melee Attack:",getModelData(npc).getMeleeAttackAnim());
+//        addSelectionBlock(5,y+=23,"Ranged Attack:",getModelData(npc).getRangedAttackAnim());
+//        addSelectionBlock(6,y+23,"Hurt:",getModelData(npc).getHurtAnim());
+        addButton(new GuiNpcButton(670, width - 22, 2, 20, 20, "X"));
     }
 
-    public CustomModelData getModelData(EntityNPCInterface npc){
-        return ((IDataDisplay)npc.display).getCustomModelData();
-    }
-    
     public void addSelectionBlock(int id, int y, String label, String value){
-        this.addLabel(new GuiLabel(id,label, guiLeft - 85, y + 5,0xffffff));
-        addTextField(new GuiTextFieldNop(id,this, guiLeft - 40, y, 200, 20, value));
-        this.addButton(new GuiButtonNop(this,id, guiLeft + 163, y, 80, 20, "mco.template.button.select"));
+        addLabel(new GuiNpcLabel(id,label, guiLeft - 85, y + 5,0xffffff));
+        addTextField(new GuiNpcTextField(id,this, fontRenderer, guiLeft - 10, y, 200, 20, value));
+        this.addButton(new GuiNpcButton(id, guiLeft + 193, y, 80, 20, "mco.template.button.select"));
+    }
+
+    public ICustomModelData getModelData(EntityNPCInterface npc){
+        return npc.getCapability(CustomModelDataProvider.DATA_CAP, null);
     }
 
     @Override
-    public void buttonEvent(GuiButtonNop button) {
+    protected void actionPerformed(GuiButton button) {
+        super.actionPerformed(button);
+
         if(button.id == 670){
             close();
         }
         if(button.id==1){
-            setSubGui(new GuiStringSelection(this,"Selecting geckolib animation file:",
+            NoppesUtil.openGUI(this.player, new GuiStringSelection(this,"Selecting geckolib animation file:",
                     AnimationFileUtil.getAnimationFileList(), (name)-> getModelData(npc).setAnimFile(name)));
         }
         if(button.id==2){
-            setSubGui(new GuiStringSelection(this,"Selecting geckolib idle animation:",
+            NoppesUtil.openGUI(this.player, new GuiStringSelection(this,"Selecting geckolib idle animation:",
                     AnimationFileUtil.getAnimationList(getModelData(npc).getAnimFile()),
                     (name)-> getModelData(npc).setIdleAnim(name)));
         }
         if(button.id==3){
-            setSubGui(new GuiStringSelection(this,"Selecting geckolib walk animation:",
+            NoppesUtil.openGUI(this.player, new GuiStringSelection(this,"Selecting geckolib walk animation:",
                     AnimationFileUtil.getAnimationList(getModelData(npc).getAnimFile()),
                     (name)-> getModelData(npc).setWalkAnim(name)));
         }
         if(button.id==4){
-            setSubGui(new GuiStringSelection(this,"Selecting geckolib attack animation:",
+            NoppesUtil.openGUI(this.player, new GuiStringSelection(this,"Selecting geckolib melee attack animation:",
                     AnimationFileUtil.getAnimationList(getModelData(npc).getAnimFile()),
-                    (name)-> getModelData(npc).setAnimFile(name)));
+                    (name)-> getModelData(npc).setMeleeAttackAnim(name)));
         }
         if(button.id==5){
-            setSubGui(new GuiStringSelection(this,"Selecting geckolib hurt animation:",
+            NoppesUtil.openGUI(this.player, new GuiStringSelection(this,"Selecting geckolib ranged attack animation:",
+                    AnimationFileUtil.getAnimationList(getModelData(npc).getAnimFile()),
+                    (name)-> getModelData(npc).setRangedAttackAnim(name)));
+        }
+        if(button.id==6){
+            NoppesUtil.openGUI(this.player, new GuiStringSelection(this,"Selecting geckolib hurt animation:",
                     AnimationFileUtil.getAnimationList(getModelData(npc).getAnimFile()),
                     (name)-> getModelData(npc).setHurtAnim(name)));
         }
@@ -76,36 +88,53 @@ public class GuiModelAnimation extends GuiNPCInterface implements ITextfieldList
     }
 
     @Override
-    public void unFocused(GuiTextFieldNop textfield) {
-        if(textfield.id == 1 && isValidAnimFile(textfield.getValue())){
+    public void unFocused(GuiNpcTextField textfield) {
+        if(textfield.getId() == 1 && isValidAnimFile(textfield.getText())){
             if(!textfield.isEmpty())
-                getModelData(npc).setAnimFile(textfield.getValue());
+                getModelData(npc).setAnimFile(textfield.getText());
             else
-                textfield.setValue(getModelData(npc).getAnimFile());
+                textfield.setText(getModelData(npc).getAnimFile());
         }
-        if(textfield.id == 2 && isValidAnimation(textfield.getValue())){
+        if(textfield.getId() == 2 && isValidAnimation(textfield.getText())){
             if(!textfield.isEmpty())
-                getModelData(npc).setIdleAnim(textfield.getValue());
+                getModelData(npc).setIdleAnim(textfield.getText());
             else
-                textfield.setValue(getModelData(npc).getIdleAnim());
+                textfield.setText(getModelData(npc).getIdleAnim());
         }
-        if(textfield.id == 3 && isValidAnimation(textfield.getValue())){
+        if(textfield.getId() == 3 && isValidAnimation(textfield.getText())){
             if(!textfield.isEmpty())
-                getModelData(npc).setWalkAnim(textfield.getValue());
+                getModelData(npc).setWalkAnim(textfield.getText());
             else
-                textfield.setValue(getModelData(npc).getWalkAnim());
+                textfield.setText(getModelData(npc).getWalkAnim());
         }
-        if(textfield.id == 4 && isValidAnimation(textfield.getValue())){
+        if(textfield.getId() == 4 && isValidAnimation(textfield.getText())){
             if(!textfield.isEmpty())
-                getModelData(npc).setAttackAnim(textfield.getValue());
+                getModelData(npc).setMeleeAttackAnim(textfield.getText());
             else
-                textfield.setValue(getModelData(npc).getAttackAnim());
+                textfield.setText(getModelData(npc).getMeleeAttackAnim());
         }
-        if(textfield.id == 5 && isValidAnimation(textfield.getValue())){
+        if(textfield.getId() == 5 && isValidAnimation(textfield.getText())){
             if(!textfield.isEmpty())
-                getModelData(npc).setHurtAnim(textfield.getValue());
+                getModelData(npc).setRangedAttackAnim(textfield.getText());
             else
-                textfield.setValue(getModelData(npc).getHurtAnim());
+                textfield.setText(getModelData(npc).getRangedAttackAnim());
         }
+        if(textfield.getId() == 6 && isValidAnimation(textfield.getText())){
+            if(!textfield.isEmpty())
+                getModelData(npc).setHurtAnim(textfield.getText());
+            else
+                textfield.setText(getModelData(npc).getHurtAnim());
+        }
+    }
+
+    @Override
+    public void subGuiClosed(SubGuiInterface subGuiInterface) {
+        initGui();
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        NoppesUtil.openGUI(this.player,parent);
     }
 }
