@@ -1,26 +1,30 @@
 package com.goodbird.cnpcgeckoaddon;
 
-import com.goodbird.cnpcgeckoaddon.client.ClientProxy;
-import com.goodbird.cnpcgeckoaddon.network.NetworkWrapper;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(CNPCGeckoAddon.MODID)
+@Mod(modid = CNPCGeckoAddon.MODID,
+        name = "CNPC-Gecko-Addon",
+        version = "1.0",
+        dependencies = "required-after:customnpcs;required-after:geckolib3")
+
 public class CNPCGeckoAddon {
     public static final String MODID = "cnpcgeckoaddon";
 
-    public CNPCGeckoAddon() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
-    }
+    @SidedProxy(clientSide = "com.goodbird.cnpcgeckoaddon.client.ClientProxy", serverSide = "com.goodbird.cnpcgeckoaddon.CommonProxy")
+    public static CommonProxy proxy;
 
-    private void setup(final FMLCommonSetupEvent event) {
-        NetworkWrapper.init();
-    }
+    @Mod.Instance
+    public static CNPCGeckoAddon instance;
 
-    private void doClientStuff(final FMLClientSetupEvent event) {
-        ClientProxy.load();
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent ev) {
+        proxy.preInit(ev);
+    }
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent ev) {
+        proxy.init(ev);
     }
 }
