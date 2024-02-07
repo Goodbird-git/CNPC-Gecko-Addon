@@ -1,33 +1,36 @@
 package com.goodbird.cnpcgeckoaddon.data;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTTagCompound;
 
-public class CustomModelData {
+public class CustomModelData implements ICustomModelData {
     private String model = "geckolib3:geo/bike.geo.json";
     private String animFile = "geckolib3:animations/bike.animation.json";
     private String idleAnim = "animation.bike.idle";
     private String walkAnim = "";
-    private String attackAnim = "";
+    private String meleeAttackAnim = "";
     private String hurtAnim = "";
+    private String rangedAttackAnim = "";
 
-    public CompoundNBT writeToNBT(CompoundNBT CompoundNBT) {
-        CompoundNBT.putString("Model", model);
-        CompoundNBT.putString("AnimFile", animFile);
-        CompoundNBT.putString("IdleAnim", idleAnim);
-        CompoundNBT.putString("WalkAnim", walkAnim);
-        CompoundNBT.putString("AttackAnim", attackAnim);
-        CompoundNBT.putString("HurtAnim", hurtAnim);
-        return CompoundNBT;
+    public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
+        nbttagcompound.setString("Model", model);
+        nbttagcompound.setString("AnimFile", animFile);
+        nbttagcompound.setString("IdleAnim", idleAnim);
+        nbttagcompound.setString("WalkAnim", walkAnim);
+        nbttagcompound.setString("MeleeAttackAnim", meleeAttackAnim);
+        nbttagcompound.setString("RangedAttackAnim", rangedAttackAnim);
+        nbttagcompound.setString("HurtAnim", hurtAnim);
+        return nbttagcompound;
     }
 
-    public void readFromNBT(CompoundNBT CompoundNBT) {
-        if(CompoundNBT.contains("Model")) {
-            model = CompoundNBT.getString("Model");
-            animFile = CompoundNBT.getString("AnimFile");
-            idleAnim = CompoundNBT.getString("IdleAnim");
-            walkAnim = CompoundNBT.getString("WalkAnim");
-            hurtAnim = CompoundNBT.getString("HurtAnim");
-            attackAnim = CompoundNBT.getString("AttackAnim");
+    public void readFromNBT(NBTTagCompound nbttagcompound) {
+        if(nbttagcompound.hasKey("Model")) {
+            model = nbttagcompound.getString("Model");
+            animFile = nbttagcompound.getString("AnimFile");
+            idleAnim = nbttagcompound.getString("IdleAnim");
+            walkAnim = nbttagcompound.getString("WalkAnim");
+            hurtAnim = nbttagcompound.getString("HurtAnim");
+            meleeAttackAnim = nbttagcompound.getString("MeleeAttackAnim");
+            rangedAttackAnim = nbttagcompound.getString("RangedAttackAnim");
         }
     }
 
@@ -63,12 +66,12 @@ public class CustomModelData {
         this.walkAnim = walkAnim;
     }
 
-    public String getAttackAnim() {
-        return attackAnim;
+    public String getMeleeAttackAnim() {
+        return meleeAttackAnim;
     }
 
-    public void setAttackAnim(String attackAnim) {
-        this.attackAnim = attackAnim;
+    public void setMeleeAttackAnim(String meleeAttackAnim) {
+        this.meleeAttackAnim = meleeAttackAnim;
     }
 
     public String getHurtAnim() {
@@ -77,5 +80,13 @@ public class CustomModelData {
 
     public void setHurtAnim(String hurtAnim) {
         this.hurtAnim = hurtAnim;
+    }
+
+    public String getRangedAttackAnim() {
+        return rangedAttackAnim;
+    }
+
+    public void setRangedAttackAnim(String rangedAttackAnim) {
+        this.rangedAttackAnim = rangedAttackAnim;
     }
 }
