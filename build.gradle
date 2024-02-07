@@ -1,74 +1,28 @@
-plugins {
-    id 'net.minecraftforge.gradle' version '5.1.+'
-    id 'org.spongepowered.mixin' version '0.7.+'
+buildscript {
+    repositories {
+        jcenter()
+        maven { url = "http://files.minecraftforge.net/maven" }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+    }
 }
+apply plugin: 'net.minecraftforge.gradle.forge'
 
-group = 'com.goodbird.cnpcgeckoaddon'
-version = '1.16.5-1.0.0'
 
-java {
-    archivesBaseName = 'CNPC-Gecko-Addon'
-    toolchain.languageVersion = JavaLanguageVersion.of(8)
+version = "1.0"
+group = "com.goodbird.cnpcgeckoaddon" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "CNPC-Gecko-Addon"
+
+sourceCompatibility = targetCompatibility = '1.8'
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
 }
 
 minecraft {
-    mappings channel: 'official', version: '1.16.5'
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-    runs {
-        client {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            //duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-            //from zipTree('lib/' + archivesBaseName + '-deobf.jar')
-            mods {
-                ElicianTweaker {
-                    source sourceSets.main
-                }
-            }
-            args '--tweakClass', 'org.spongepowered.asm.launch.MixinTweaker', '--mixin', 'mixins.cnpcgeckoaddon.json'
-        }
-
-        server {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-
-            mods {
-                examplemod {
-                    source sourceSets.main
-                }
-            }
-            args '--tweakClass', 'org.spongepowered.asm.launch.MixinTweaker', '--mixin', 'mixins.cnpcgeckoaddon.json'
-        }
-
-        data {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-
-            args '--mod', 'econ2', '--all',
-                 '--output', file('src/generated/resources/'),
-                 '--existing', file('src/main/resources/')
-
-            mods {
-                examplemod {
-                    source sourceSets.main
-                }
-            }
-        }
-    }
-}
-
-sourceSets.main.resources { srcDir 'src/generated/resources' }
-
-
-
-mixin {
-    add sourceSets.main, "mixins.cnpcgeckoaddon.refmap.json"
+    version = "1.12.2-14.23.5.2768"
+    runDir = "run"
+    mappings = "snapshot_20171003"
 }
 
 repositories {
@@ -78,30 +32,34 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.5-36.2.39'
-    implementation name: 'CustomNPCs v1.16.5-deobf'
-    implementation fg.deobf('lib:geckolib-forge-1.16.5:3.0.106')
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    compile name: 'CustomNPCs_1.12.2-deobf'
+    compile name: 'geckolib-forge-1.12.2-3.0.31-deobf'
+}
+
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+runClient {
+    args += ['--username', 'Goodbird']
 }
 
 jar {
     manifest {
-        attributes([
-                "Specification-Title"     : "CNPC-Gecko-Addon",
-                "Specification-Version"   : "1",
-                "Implementation-Title"    : project.name,
-                "Implementation-Version"  : project.jar.archiveVersion,
-                "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
-                "MixinConfigs": "mixins.cnpcgeckoaddon.json", // Конфигурации миксинов, через зяпятую если их несколько
-                "FMLCorePluginContainsFMLMod": "true",  // Не забываем указать эти два флага,
-                "ForceLoadAsMod": "true",               // чтобы Forge нормально загрузил и мод, и миксины
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
+        attributes 'FMLCorePlugin': 'com.goodbird.cnpcgeckoaddon.hooklib.cnpchooks.CNPCHookLoader'
+        attributes 'FMLCorePluginContainsFMLMod': 'true'
+        attributes 'FMLAT': 'cnpcgeckoaddonacctrans.cfg'
     }
-}
-
-jar.finalizedBy('reobfJar')
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
 }

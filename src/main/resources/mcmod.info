@@ -1,0 +1,18 @@
+[
+  {
+    "modid": "cnpcgeckoaddon",
+    "name": "CNPC-Gecko-Addon",
+    "description": "",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": [
+      "Goodbird"
+    ],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]
