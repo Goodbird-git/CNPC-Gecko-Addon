@@ -48,32 +48,9 @@ public class RenderCustomModel extends GeoEntityRendererCompat<EntityCustomModel
         return bones.toArray(new GeoBone[0]);
     }
 
-//    public void renderItem(GeoBone locator, ItemStack stack, MatrixStack poseStack, IRenderTypeBuffer buf, int light) {
-//        poseStack.pushPose();
-//        float scale = 0.7F;
-//        poseStack.scale(scale, scale, scale);
-//        GeoBone[] bonePath = getPathFromRoot(locator);
-//
-//        for (GeoBone b : bonePath) {
-//            poseStack.translate(b.getPositionX() / (16.0F * scale), b.getPositionY() / (16.0F * scale), b.getPositionZ() / (16.0F * scale));
-//            poseStack.translate(b.getPivotX() / (16.0F * scale), b.getPivotY() / (16.0F * scale), b.getPivotZ() / (16.0F * scale));
-//            poseStack.mulPose(Vector3f.ZP.rotationDegrees((float) ((double) b.getRotationZ() / Math.PI * 180.0)));
-//            poseStack.mulPose(Vector3f.YP.rotationDegrees((float) ((double) b.getRotationY() / Math.PI * 180.0)));
-//            poseStack.mulPose(Vector3f.XP.rotationDegrees((float) ((double) b.getRotationX() / Math.PI * 180.0)));
-//            poseStack.scale(b.getScaleX(), b.getScaleY(), b.getScaleZ());
-//            poseStack.translate(-b.getPivotX() / (16.0F * scale), -b.getPivotY() / (16.0F * scale), -b.getPivotZ() / (16.0F * scale));
-//        }
-//        poseStack.translate(0,0,-0.4);
-//        poseStack.translate(locator.getPivotX()/10f*5f/6f,locator.getPivotY()/10f*12f/14f,0);
-//        poseStack.mulPose(Vector3f.XP.rotationDegrees(215f));
-//        poseStack.mulPose(Vector3f.YP.rotationDegrees(90));
-//        Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemCameraTransforms.TransformType.FIXED,light, OverlayTexture.NO_OVERLAY, poseStack, buf);
-//        poseStack.popPose();
-//    }
-
     public void renderItem(EntityCustomModel animatable, GeoBone locator, ItemStack stack) {
         GL11.glPushMatrix();
-        float scale = 0.5F;
+        float scale = 0.7F;
         GL11.glScaled(scale, scale, scale);
         GeoBone[] bonePath = this.getPathFromRoot(locator);
 
@@ -86,10 +63,15 @@ public class RenderCustomModel extends GeoEntityRendererCompat<EntityCustomModel
             GL11.glScalef(b.getScaleX(), b.getScaleY(), b.getScaleZ());
             GL11.glTranslatef(-b.getPivotX() / (16.0F * scale), -b.getPivotY() / (16.0F * scale), -b.getPivotZ() / (16.0F * scale));
         }
-        GL11.glRotatef(250.0F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(40.0F, 0.0F, 1.0F, 0.0F);
-        GL11.glTranslatef(-0.4F, -0.55F, 1.7F);
+        GL11.glTranslated(0,0,-0.4);
+        GL11.glTranslated(locator.getPivotX()/10f*5f/6f,locator.getPivotY()/10f*12f/14f,0);
+        GL11.glRotatef(215,1,0,0);
+        GL11.glRotatef(90,0,1,0);
         Minecraft.getMinecraft().getItemRenderer().renderItem(animatable, stack, ItemCameraTransforms.TransformType.FIXED);
         GL11.glPopMatrix();
+        ResourceLocation entityTexture = getEntityTexture(animatable);
+        if(entityTexture!=null) {
+            Minecraft.getMinecraft().getTextureManager().bindTexture(entityTexture);
+        }
     }
 }
