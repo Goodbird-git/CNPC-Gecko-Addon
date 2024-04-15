@@ -3,22 +3,14 @@ package com.goodbird.cnpcgeckoaddon.hooklib.cnpchooks;
 import com.goodbird.cnpcgeckoaddon.client.gui.GuiModelAnimation;
 import com.goodbird.cnpcgeckoaddon.client.gui.GuiStringSelection;
 import com.goodbird.cnpcgeckoaddon.data.CustomModelDataProvider;
-import com.goodbird.cnpcgeckoaddon.data.ICustomModelData;
 import com.goodbird.cnpcgeckoaddon.entity.EntityCustomModel;
 import com.goodbird.cnpcgeckoaddon.hooklib.asm.Hook;
 import com.goodbird.cnpcgeckoaddon.hooklib.asm.ReturnCondition;
-import com.goodbird.cnpcgeckoaddon.network.NetworkWrapper;
-import com.goodbird.cnpcgeckoaddon.network.PacketSyncAnimation;
-import com.goodbird.cnpcgeckoaddon.utils.NpcTextureUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import noppes.npcs.api.entity.IPlayer;
-import noppes.npcs.api.wrapper.NPCWrapper;
-import noppes.npcs.api.wrapper.WrapperNpcAPI;
-import noppes.npcs.client.EntityUtil;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.model.GuiCreationEntities;
 import noppes.npcs.client.gui.util.GuiNpcButton;
@@ -26,17 +18,15 @@ import noppes.npcs.client.gui.util.GuiNpcLabel;
 import noppes.npcs.client.renderer.RenderCustomNpc;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
-import noppes.npcs.entity.data.DataDisplay;
 import org.lwjgl.opengl.GL11;
 import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 
 import java.util.Vector;
-
-public class AnnotationHooks {
-
+@SideOnly(Side.CLIENT)
+public class ClientHooks {
     @Hook(returnCondition = ReturnCondition.ON_TRUE)
+    @SideOnly(Side.CLIENT)
     public static boolean renderModel(RenderCustomNpc thiss, EntityCustomNpc npc, float par2, float par3, float par4, float par5, float par6, float par7) {
         if(npc.modelData.getEntity(npc) instanceof IAnimatable){
             GL11.glRotatef(180, 1,0,0);
@@ -46,7 +36,7 @@ public class AnnotationHooks {
         }
         return false;
     }
-
+    @SideOnly(Side.CLIENT)
     private static void renderGeoModel(EntityCustomNpc npc, float rot, float partial)
     {
         npc.modelData.getEntity(npc).renderYawOffset = npc.modelData.getEntity(npc).prevRenderYawOffset = 0;
@@ -70,38 +60,8 @@ public class AnnotationHooks {
         }
     }
 
-    @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public static AnimationBuilder createAnimBuilder(WrapperNpcAPI api){
-        return new AnimationBuilder();
-    }
-
-    @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public static void syncAnimationsFor(NPCWrapper<EntityNPCInterface> wrapper, IPlayer player, AnimationBuilder builder) {
-        NetworkWrapper.sendToPlayer(new PacketSyncAnimation(wrapper.getMCEntity(), builder), player.getMCEntity());
-    }
-    @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public static void syncAnimationsForAll(NPCWrapper<EntityNPCInterface> wrapper, AnimationBuilder builder) {
-        NetworkWrapper.sendToAll(new PacketSyncAnimation(wrapper.getMCEntity(), builder));
-    }
-
     @Hook(injectOnExit = true)
-    public static void Copy(EntityUtil cl, EntityLivingBase copied, EntityLivingBase entity) {
-        if (entity instanceof EntityCustomModel && copied instanceof EntityNPCInterface) {
-            EntityCustomModel modelEntity = (EntityCustomModel) entity;
-            EntityNPCInterface npc = (EntityNPCInterface) copied;
-            ICustomModelData data = npc.getCapability(CustomModelDataProvider.DATA_CAP, null);
-            modelEntity.textureResLoc = NpcTextureUtils.getNpcTexture((EntityNPCInterface) copied);
-            modelEntity.modelResLoc = new ResourceLocation(data.getModel());
-            modelEntity.animResLoc = new ResourceLocation(data.getAnimFile());
-            modelEntity.idleAnimName = data.getIdleAnim();
-            modelEntity.walkAnimName = data.getWalkAnim();
-            if(npc.inventory.getLeftHand()!=null) {
-                modelEntity.leftHeldItem = npc.inventory.getLeftHand().getMCItemStack();
-            }
-        }
-    }
-
-    @Hook(injectOnExit = true)
+    @SideOnly(Side.CLIENT)
     public static void initGui(GuiCreationEntities gui) {
         EntityNPCInterface npc = gui.npc;
         if (npc instanceof EntityCustomNpc && ((EntityCustomNpc) npc).modelData.getEntity(npc) instanceof EntityCustomModel) {
@@ -118,6 +78,7 @@ public class AnnotationHooks {
     }
 
     @Hook(injectOnExit = true)
+    @SideOnly(Side.CLIENT)
     public static void actionPerformed(GuiCreationEntities gui, GuiButton btn) {
         if (btn.id == 202) {
             Vector<String> list = new Vector<>();
@@ -134,17 +95,5 @@ public class AnnotationHooks {
         }
     }
 
-    @Hook(injectOnExit = true)
-    public static void writeToNBT(DataDisplay data, NBTTagCompound nbttagcompound) {
-        ICustomModelData modeldata = data.npc.getCapability(CustomModelDataProvider.DATA_CAP, null);
-        if(modeldata!=null)
-            modeldata.writeToNBT(nbttagcompound);
-    }
 
-    @Hook(injectOnExit = true)
-    public static void readToNBT(DataDisplay data, NBTTagCompound nbttagcompound){
-        ICustomModelData modeldata = data.npc.getCapability(CustomModelDataProvider.DATA_CAP, null);
-        if(modeldata!=null)
-            modeldata.readFromNBT(nbttagcompound);
-    }
 }
