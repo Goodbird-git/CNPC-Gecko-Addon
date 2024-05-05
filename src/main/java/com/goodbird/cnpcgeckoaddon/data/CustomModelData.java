@@ -10,9 +10,7 @@ public class CustomModelData implements ICustomModelData {
     private String meleeAttackAnim = "";
     private String hurtAnim = "";
     private String rangedAttackAnim = "";
-
     private String headBoneName = "head";
-
     private int transitionLengthTicks = 10;
 
     public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
@@ -25,10 +23,6 @@ public class CustomModelData implements ICustomModelData {
         nbttagcompound.setString("HurtAnim", hurtAnim);
         nbttagcompound.setString("HeadBoneName", headBoneName);
         nbttagcompound.setInteger("TransitionLengthTicks", transitionLengthTicks);
-        headBoneName = nbttagcompound.getString("HeadBoneName");
-        if(nbttagcompound.hasKey("TransitionLengthTicks")){
-            transitionLengthTicks = nbttagcompound.getInteger("TransitionLengthTicks");
-        }
         return nbttagcompound;
     }
 
@@ -41,6 +35,10 @@ public class CustomModelData implements ICustomModelData {
             hurtAnim = nbttagcompound.getString("HurtAnim");
             meleeAttackAnim = nbttagcompound.getString("MeleeAttackAnim");
             rangedAttackAnim = nbttagcompound.getString("RangedAttackAnim");
+            headBoneName = nbttagcompound.getString("HeadBoneName");
+            if(nbttagcompound.hasKey("TransitionLengthTicks")){
+                transitionLengthTicks = nbttagcompound.getInteger("TransitionLengthTicks");
+            }
         }
     }
 
