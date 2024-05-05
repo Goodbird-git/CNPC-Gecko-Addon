@@ -11,6 +11,10 @@ public class CustomModelData implements ICustomModelData {
     private String hurtAnim = "";
     private String rangedAttackAnim = "";
 
+    private String headBoneName = "head";
+
+    private int transitionLengthTicks = 10;
+
     public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
         nbttagcompound.setString("Model", model);
         nbttagcompound.setString("AnimFile", animFile);
@@ -19,6 +23,12 @@ public class CustomModelData implements ICustomModelData {
         nbttagcompound.setString("MeleeAttackAnim", meleeAttackAnim);
         nbttagcompound.setString("RangedAttackAnim", rangedAttackAnim);
         nbttagcompound.setString("HurtAnim", hurtAnim);
+        nbttagcompound.setString("HeadBoneName", headBoneName);
+        nbttagcompound.setInteger("TransitionLengthTicks", transitionLengthTicks);
+        headBoneName = nbttagcompound.getString("HeadBoneName");
+        if(nbttagcompound.hasKey("TransitionLengthTicks")){
+            transitionLengthTicks = nbttagcompound.getInteger("TransitionLengthTicks");
+        }
         return nbttagcompound;
     }
 
@@ -88,5 +98,21 @@ public class CustomModelData implements ICustomModelData {
 
     public void setRangedAttackAnim(String rangedAttackAnim) {
         this.rangedAttackAnim = rangedAttackAnim;
+    }
+
+    public String getHeadBoneName() {
+        return headBoneName;
+    }
+
+    public void setHeadBoneName(String headBoneName) {
+        this.headBoneName = headBoneName;
+    }
+
+    public int getTransitionLengthTicks() {
+        return transitionLengthTicks;
+    }
+
+    public void setTransitionLengthTicks(int transitionLengthTicks) {
+        this.transitionLengthTicks = transitionLengthTicks;
     }
 }

@@ -30,6 +30,9 @@ public class EntityCustomModel extends EntityCreature implements IAnimatable, IA
     public AnimationBuilder manualAnim = null;
     public AnimationBuilder attackAnim = null;
     public AnimationBuilder hurtAnim = null;
+
+    public String headBoneName = "head";
+
     public ItemStack leftHeldItem;
 
     private <E extends IAnimatable> PlayState predicateMovement(AnimationEvent<E> event) {
@@ -74,7 +77,6 @@ public class EntityCustomModel extends EntityCreature implements IAnimatable, IA
     public EntityCustomModel(World worldIn) {
         super(worldIn);
         this.ignoreFrustumCheck = true;
-        this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.setSize(0.7F, 2F);
     }
 

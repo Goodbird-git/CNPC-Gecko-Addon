@@ -2,7 +2,9 @@ package com.goodbird.cnpcgeckoaddon.client.renderer;
 
 import com.goodbird.cnpcgeckoaddon.client.model.ModelCustom;
 import com.goodbird.cnpcgeckoaddon.entity.EntityCustomModel;
+import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.item.ItemStack;
@@ -10,6 +12,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
+import net.minecraft.util.math.MathHelper;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -37,6 +40,26 @@ public class RenderCustomModel extends GeoEntityRendererCompat<EntityCustomModel
             }
         }
         super.render(model, animatable, partialTicks,red,green,blue,alpha);
+    }
+
+    protected void applyRotations(EntityCustomModel entityLiving, float ageInTicks, float rotationYaw, float partialTicks) {
+        if (!entityLiving.isPlayerSleeping()) {
+            GlStateManager.rotate(-180, 0.0F, 1.0F, 0.0F);
+        }
+        if (entityLiving.deathTime > 0) {
+            float f = ((float)entityLiving.deathTime + partialTicks - 1.0F) / 20.0F * 1.6F;
+            f = MathHelper.sqrt(f);
+            if (f > 1.0F) {
+                f = 1.0F;
+            }
+            GlStateManager.rotate(f * this.getDeathMaxRotation(entityLiving), 0.0F, 0.0F, 1.0F);
+        } else if (entityLiving.hasCustomName()) {
+            String s = ChatFormatting.stripFormatting(entityLiving.getName());
+            if (("Dinnerbone".equals(s) || "Grumm".equals(s))) {
+                GlStateManager.translate(0.0, entityLiving.height + 0.1F, 0.0);
+                GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
+            }
+        }
     }
 
     public GeoBone[] getPathFromRoot(GeoBone bone) {

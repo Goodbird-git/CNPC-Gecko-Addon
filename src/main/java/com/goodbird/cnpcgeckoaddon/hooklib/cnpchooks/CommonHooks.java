@@ -18,6 +18,8 @@ import noppes.npcs.client.EntityUtil;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.entity.data.DataDisplay;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.manager.AnimationData;
 
 public class CommonHooks {
     @Hook(injectOnExit = true)
@@ -61,6 +63,11 @@ public class CommonHooks {
             modelEntity.walkAnimName = data.getWalkAnim();
             if(npc.inventory.getLeftHand()!=null) {
                 modelEntity.leftHeldItem = npc.inventory.getLeftHand().getMCItemStack();
+            }
+            modelEntity.headBoneName = data.getHeadBoneName();
+            AnimationData animationData = modelEntity.getFactory().getOrCreateAnimationData(modelEntity.getUniqueID().hashCode());
+            for(AnimationController controller : animationData.getAnimationControllers().values()){
+                controller.transitionLengthTicks = data.getTransitionLengthTicks();
             }
         }
     }

@@ -34,4 +34,12 @@ public interface ICustomModelData {
     NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound);
 
     void readFromNBT(NBTTagCompound nbttagcompound);
+
+    String getHeadBoneName();
+
+    void setHeadBoneName(String headBoneName);
+
+    int getTransitionLengthTicks();
+
+    void setTransitionLengthTicks(int transitionLengthTicks);
 }

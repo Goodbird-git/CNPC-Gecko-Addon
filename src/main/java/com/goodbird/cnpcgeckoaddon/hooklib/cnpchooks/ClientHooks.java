@@ -2,6 +2,7 @@ package com.goodbird.cnpcgeckoaddon.hooklib.cnpchooks;
 
 import com.goodbird.cnpcgeckoaddon.client.gui.GuiModelAnimation;
 import com.goodbird.cnpcgeckoaddon.client.gui.GuiStringSelection;
+import com.goodbird.cnpcgeckoaddon.client.gui.SubGuiModelExtras;
 import com.goodbird.cnpcgeckoaddon.data.CustomModelDataProvider;
 import com.goodbird.cnpcgeckoaddon.entity.EntityCustomModel;
 import com.goodbird.cnpcgeckoaddon.hooklib.asm.Hook;
@@ -39,7 +40,7 @@ public class ClientHooks {
     @SideOnly(Side.CLIENT)
     private static void renderGeoModel(EntityCustomNpc npc, float rot, float partial)
     {
-        npc.modelData.getEntity(npc).renderYawOffset = npc.modelData.getEntity(npc).prevRenderYawOffset = 0;
+        //npc.modelData.getEntity(npc).renderYawOffset = npc.modelData.getEntity(npc).prevRenderYawOffset = 0;
         if (!npc.isInvisible())
         {
             Minecraft.getMinecraft().getRenderManager().renderEntity(npc.modelData.getEntity(npc), 0,0,0,rot,partial,false);
@@ -74,6 +75,7 @@ public class ClientHooks {
             gui.addButton(new GuiNpcButton(202, gui.guiLeft + 160, gui.guiTop + 20, 150, 20, customModel.modelResLoc.getResourcePath()));
             gui.addLabel(new GuiNpcLabel(213, "Model Animation:", gui.guiLeft + 124, gui.guiTop + 46, 0xffffff));
             gui.addButton(new GuiNpcButton(212, gui.guiLeft + 210, gui.guiTop + 40, 100, 20, "selectServer.edit"));
+            gui.addButton(new GuiNpcButton(213, gui.guiLeft + 124, gui.guiTop + 60, 187, 20, "Extras"));
         }
     }
 
@@ -92,6 +94,9 @@ public class ClientHooks {
         }
         if (btn.id == 212) {
             NoppesUtil.openGUI(Minecraft.getMinecraft().player, new GuiModelAnimation(gui, gui.npc));
+        }
+        if(btn.id == 213){
+            NoppesUtil.openGUI(Minecraft.getMinecraft().player, new SubGuiModelExtras(gui.npc));
         }
     }
 
