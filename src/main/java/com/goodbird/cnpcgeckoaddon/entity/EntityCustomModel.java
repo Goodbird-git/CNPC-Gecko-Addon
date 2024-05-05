@@ -81,6 +81,11 @@ public class EntityCustomModel extends EntityCreature implements IAnimatable, IA
     }
 
     @Override
+    public void setSize(float width, float height) {
+        super.setSize(width, height);
+    }
+
+    @Override
     public void registerControllers(AnimationData data) {
         data.addAnimationController(new AnimationController<>(this, "movement", 10, this::predicateMovement));
     }

@@ -69,6 +69,10 @@ public class CommonHooks {
             for(AnimationController controller : animationData.getAnimationControllers().values()){
                 controller.transitionLengthTicks = data.getTransitionLengthTicks();
             }
+            if(data.getHeight()!=modelEntity.height || data.getWidth() != modelEntity.width){
+                modelEntity.setSize(data.getWidth(), data.getHeight());
+                npc.updateHitbox();
+            }
         }
     }
 }

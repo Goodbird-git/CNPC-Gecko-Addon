@@ -13,6 +13,10 @@ public class CustomModelData implements ICustomModelData {
     private String headBoneName = "head";
     private int transitionLengthTicks = 10;
 
+    private float width = 0.7f;
+
+    private float height = 2f;
+
     public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
         nbttagcompound.setString("Model", model);
         nbttagcompound.setString("AnimFile", animFile);
@@ -23,6 +27,8 @@ public class CustomModelData implements ICustomModelData {
         nbttagcompound.setString("HurtAnim", hurtAnim);
         nbttagcompound.setString("HeadBoneName", headBoneName);
         nbttagcompound.setInteger("TransitionLengthTicks", transitionLengthTicks);
+        nbttagcompound.setFloat("Width",width);
+        nbttagcompound.setFloat("Height",height);
         return nbttagcompound;
     }
 
@@ -35,10 +41,18 @@ public class CustomModelData implements ICustomModelData {
             hurtAnim = nbttagcompound.getString("HurtAnim");
             meleeAttackAnim = nbttagcompound.getString("MeleeAttackAnim");
             rangedAttackAnim = nbttagcompound.getString("RangedAttackAnim");
-            headBoneName = nbttagcompound.getString("HeadBoneName");
-            if(nbttagcompound.hasKey("TransitionLengthTicks")){
+
+            if(nbttagcompound.hasKey("HeadBoneName"))
+                headBoneName = nbttagcompound.getString("HeadBoneName");
+
+            if(nbttagcompound.hasKey("Width"))
+                width = nbttagcompound.getFloat("Width");
+
+            if(nbttagcompound.hasKey("Height"))
+                height = nbttagcompound.getFloat("Height");
+
+            if(nbttagcompound.hasKey("TransitionLengthTicks"))
                 transitionLengthTicks = nbttagcompound.getInteger("TransitionLengthTicks");
-            }
         }
     }
 
@@ -112,5 +126,21 @@ public class CustomModelData implements ICustomModelData {
 
     public void setTransitionLengthTicks(int transitionLengthTicks) {
         this.transitionLengthTicks = transitionLengthTicks;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public void setWidth(float width) {
+        this.width = width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public void setHeight(float height) {
+        this.height = height;
     }
 }

@@ -96,7 +96,7 @@ public class ClientHooks {
             NoppesUtil.openGUI(Minecraft.getMinecraft().player, new GuiModelAnimation(gui, gui.npc));
         }
         if(btn.id == 213){
-            NoppesUtil.openGUI(Minecraft.getMinecraft().player, new SubGuiModelExtras(gui.npc));
+            NoppesUtil.openGUI(Minecraft.getMinecraft().player, new SubGuiModelExtras(gui, gui.npc));
         }
     }
 
