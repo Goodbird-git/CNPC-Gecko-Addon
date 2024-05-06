@@ -107,18 +107,20 @@ public class ClientHooks {
         }
     }
 
-    @Hook(targetMethod = "renderTileEntityAt", returnCondition = ReturnCondition.ON_TRUE)
+    @Hook(targetMethod = "render", returnCondition = ReturnCondition.ON_TRUE)
     @SideOnly(Side.CLIENT)
-    public static boolean customGeckoModelRendering(BlockScriptedRenderer renderer, TileEntity te, double x, double y, double z, float partialTicks) {
+    public static boolean customGeckoModelRendering(BlockScriptedRenderer renderer, TileEntity te, double x, double y, double z, float partialTicks, int blockDamage, float alpha) {
         if(overrideModel()) return false;
         if(!(te instanceof TileScripted)) return false;
         TileScripted tileScripted = (TileScripted) te;
         if(!(tileScripted.renderTile instanceof TileEntityCustomModel)) return false;
         GL11.glPushMatrix();
+        GL11.glTranslated(x,y,z);
         GL11.glRotatef((float)tileScripted.rotationY, 0.0F, 1.0F, 0.0F);
         GL11.glRotatef((float)tileScripted.rotationX, 1.0F, 0.0F, 0.0F);
         GL11.glRotatef((float)tileScripted.rotationZ, 0.0F, 0.0F, 1.0F);
         GL11.glScalef(tileScripted.scaleX, tileScripted.scaleY, tileScripted.scaleZ);
+        GL11.glTranslated(-x,-y,-z);
         TileEntityRendererDispatcher.instance.render(tileScripted.renderTile, x, y, z, partialTicks);
         GL11.glPopMatrix();
         return true;

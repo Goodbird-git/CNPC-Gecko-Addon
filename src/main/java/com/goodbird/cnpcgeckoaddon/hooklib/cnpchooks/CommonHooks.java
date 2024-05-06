@@ -15,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import noppes.npcs.api.block.IBlockScripted;
 import noppes.npcs.api.entity.IPlayer;
@@ -54,31 +55,31 @@ public class CommonHooks {
     }
 
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public void setGeckoModel(NPCWrapper<EntityNPCInterface> npc, String model) {
+    public static void setGeckoModel(NPCWrapper<EntityNPCInterface> npc, String model) {
         getModelData(npc.getMCEntity()).setModel(model);
         npc.updateClient();
     }
 
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public void setGeckoTexture(NPCWrapper<EntityNPCInterface> npc, String texture) {
+    public static void setGeckoTexture(NPCWrapper<EntityNPCInterface> npc, String texture) {
         npc.getMCEntity().display.setSkinTexture(texture);
         npc.updateClient();
     }
 
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public void setGeckoAnimationFile(NPCWrapper<EntityNPCInterface> npc, String animation) {
+    public static void setGeckoAnimationFile(NPCWrapper<EntityNPCInterface> npc, String animation) {
         getModelData(npc.getMCEntity()).setAnimFile(animation);
         npc.updateClient();
     }
 
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public void setGeckoIdleAnimation(NPCWrapper<EntityNPCInterface> npc, String animation) {
+    public static void setGeckoIdleAnimation(NPCWrapper<EntityNPCInterface> npc, String animation) {
         getModelData(npc.getMCEntity()).setIdleAnim(animation);
         npc.updateClient();
     }
 
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public void setGeckoWalkAnimation(NPCWrapper<EntityNPCInterface> npc, String animation) {
+    public static void setGeckoWalkAnimation(NPCWrapper<EntityNPCInterface> npc, String animation) {
         getModelData(npc.getMCEntity()).setWalkAnim(animation);
         npc.updateClient();
     }
@@ -132,10 +133,11 @@ public class CommonHooks {
         if(compound.hasKey("renderTileTag")){
             tile.renderTile = new TileEntityCustomModel();
             NBTTagCompound saveTag = compound.getCompoundTag("renderTileTag");
+            World[] worlds = FMLCommonHandler.instance().getMinecraftServerInstance().worlds;
             if(FMLCommonHandler.instance().getMinecraftServerInstance()!=null && saveTag.hasKey("dimID")){
-
-                World world = FMLCommonHandler.instance().getMinecraftServerInstance().worlds[saveTag.getInteger("dimID")];
-                tile.renderTile.setWorld(world);
+                tile.renderTile.setWorld(worlds[saveTag.getInteger("dimID")]);
+            }else{
+                tile.renderTile.setWorld(worlds[0]);
             }
             tile.renderTile.readFromNBT(saveTag);
         }
@@ -146,8 +148,7 @@ public class CommonHooks {
         if(tile.renderTile!=null) {
             NBTTagCompound saveTag = new NBTTagCompound();
             tile.renderTile.writeToNBT(saveTag);
-            tile.renderTile.getWorld();
-            if(tile.renderTile.getWorld().provider != null)
+            if(tile.renderTile.getWorld()!= null && tile.renderTile.getWorld().provider != null)
                 saveTag.setInteger("dimID", tile.renderTile.getWorld().provider.getDimension());
             compound.setTag("renderTileTag", saveTag);
         }
@@ -156,7 +157,7 @@ public class CommonHooks {
     private static TileEntityCustomModel getOrCreateTECM(IBlockScripted scriptedBlock){
         TileScripted tile = (TileScripted) scriptedBlock.getMCTileEntity();
         if(!(tile.renderTile instanceof TileEntityCustomModel)){
-            tile.renderTile = new TileEntityCustomModel();
+            tile.renderTile = new TileEntityCustomModel(tile);
         }
         return (TileEntityCustomModel) tile.renderTile;
     }
