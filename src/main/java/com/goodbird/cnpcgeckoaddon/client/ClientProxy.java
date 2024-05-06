@@ -5,8 +5,11 @@ import com.goodbird.cnpcgeckoaddon.client.renderer.RenderCustomModel;
 import com.goodbird.cnpcgeckoaddon.client.renderer.RenderTileCustomModel;
 import com.goodbird.cnpcgeckoaddon.entity.EntityCustomModel;
 import com.goodbird.cnpcgeckoaddon.tile.TileEntityCustomModel;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import software.bernie.geckolib3.GeckoLib;
@@ -24,5 +27,9 @@ public class ClientProxy  extends CommonProxy {
     public void init(FMLInitializationEvent ev) {
         super.init(ev);
         GeckoLib.initialize();
+    }
+
+    public World getWorldById(int id){
+        return Minecraft.getMinecraft().world;
     }
 }

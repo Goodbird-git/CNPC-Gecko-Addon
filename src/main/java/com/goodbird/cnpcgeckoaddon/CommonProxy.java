@@ -9,8 +9,10 @@ import com.goodbird.cnpcgeckoaddon.entity.EntityCustomModel;
 import com.goodbird.cnpcgeckoaddon.network.NetworkWrapper;
 import com.goodbird.cnpcgeckoaddon.tile.TileEntityCustomModel;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -27,5 +29,9 @@ public class CommonProxy {
         GameRegistry.registerTileEntity(TileEntityCustomModel.class, "custommodeltile");
         CapabilityManager.INSTANCE.register(ICustomModelData.class, new CustomModelDataStorage(), CustomModelData.class);
         MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
+    }
+
+    public World getWorldById(int id){
+        return FMLCommonHandler.instance().getMinecraftServerInstance().worlds[id];
     }
 }

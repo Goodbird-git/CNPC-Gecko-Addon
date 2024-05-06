@@ -31,7 +31,7 @@ public class TileEntityCustomModel extends TileEntity implements IAnimatable {
 
     private <E extends TileEntity & IAnimatable> PlayState predicate(AnimationEvent<E> event) {
         if (manualAnim != null) {
-            if (event.getController().getAnimationState() == AnimationState.Stopped) {
+            if (event.getController().currentAnimationBuilder == manualAnim && event.getController().getAnimationState() == AnimationState.Stopped) {
                 manualAnim = null;
             } else {
                 if (event.getController().currentAnimationBuilder != manualAnim) {

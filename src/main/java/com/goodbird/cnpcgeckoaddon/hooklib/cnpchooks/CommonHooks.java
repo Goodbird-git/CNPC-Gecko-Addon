@@ -1,5 +1,6 @@
 package com.goodbird.cnpcgeckoaddon.hooklib.cnpchooks;
 
+import com.goodbird.cnpcgeckoaddon.CNPCGeckoAddon;
 import com.goodbird.cnpcgeckoaddon.data.CustomModelDataProvider;
 import com.goodbird.cnpcgeckoaddon.data.ICustomModelData;
 import com.goodbird.cnpcgeckoaddon.entity.EntityCustomModel;
@@ -133,11 +134,10 @@ public class CommonHooks {
         if(compound.hasKey("renderTileTag")){
             tile.renderTile = new TileEntityCustomModel();
             NBTTagCompound saveTag = compound.getCompoundTag("renderTileTag");
-            World[] worlds = FMLCommonHandler.instance().getMinecraftServerInstance().worlds;
-            if(FMLCommonHandler.instance().getMinecraftServerInstance()!=null && saveTag.hasKey("dimID")){
-                tile.renderTile.setWorld(worlds[saveTag.getInteger("dimID")]);
+            if(saveTag.hasKey("dimID")){
+                tile.renderTile.setWorld(CNPCGeckoAddon.proxy.getWorldById(saveTag.getInteger("dimID")));
             }else{
-                tile.renderTile.setWorld(worlds[0]);
+                tile.renderTile.setWorld(CNPCGeckoAddon.proxy.getWorldById(0));
             }
             tile.renderTile.readFromNBT(saveTag);
         }
@@ -191,12 +191,12 @@ public class CommonHooks {
     }
 
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public static void syncAnimForPlayer(BlockScriptedWrapper scriptedBlock, AnimationBuilder builder, IPlayer<EntityPlayerMP> player) {
+    public static void syncAnimationsFor(BlockScriptedWrapper scriptedBlock, IPlayer player, AnimationBuilder builder) {
         NetworkWrapper.sendToPlayer(new CPacketSyncTileManualAnim(scriptedBlock.getMCTileEntity(), builder), player.getMCEntity());
     }
 
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public static void syncAnimForAll(BlockScriptedWrapper scriptedBlock, AnimationBuilder builder) {
+    public static void syncAnimationsForAll(BlockScriptedWrapper scriptedBlock, AnimationBuilder builder) {
         NetworkWrapper.sendToAll(new CPacketSyncTileManualAnim(scriptedBlock.getMCTileEntity(), builder));
     }
 }
