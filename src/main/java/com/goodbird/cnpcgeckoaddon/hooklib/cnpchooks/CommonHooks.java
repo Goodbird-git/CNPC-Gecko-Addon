@@ -54,31 +54,31 @@ public class CommonHooks {
     }
 
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public void setModel(NPCWrapper<EntityNPCInterface> npc, String model) {
+    public void setGeckoModel(NPCWrapper<EntityNPCInterface> npc, String model) {
         getModelData(npc.getMCEntity()).setModel(model);
         npc.updateClient();
     }
 
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public void setTexture(NPCWrapper<EntityNPCInterface> npc, String texture) {
+    public void setGeckoTexture(NPCWrapper<EntityNPCInterface> npc, String texture) {
         npc.getMCEntity().display.setSkinTexture(texture);
         npc.updateClient();
     }
 
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public void setAnimationFile(NPCWrapper<EntityNPCInterface> npc, String animation) {
+    public void setGeckoAnimationFile(NPCWrapper<EntityNPCInterface> npc, String animation) {
         getModelData(npc.getMCEntity()).setAnimFile(animation);
         npc.updateClient();
     }
 
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public void setIdleAnimation(NPCWrapper<EntityNPCInterface> npc, String animation) {
+    public void setGeckoIdleAnimation(NPCWrapper<EntityNPCInterface> npc, String animation) {
         getModelData(npc.getMCEntity()).setIdleAnim(animation);
         npc.updateClient();
     }
 
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public void setWalkAnimation(NPCWrapper<EntityNPCInterface> npc, String animation) {
+    public void setGeckoWalkAnimation(NPCWrapper<EntityNPCInterface> npc, String animation) {
         getModelData(npc.getMCEntity()).setWalkAnim(animation);
         npc.updateClient();
     }
@@ -162,28 +162,28 @@ public class CommonHooks {
     }
 
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public static void setModel(BlockScriptedWrapper scriptedBlock, String model) {
+    public static void setGeckoModel(BlockScriptedWrapper scriptedBlock, String model) {
         TileEntityCustomModel geckoTile = getOrCreateTECM(scriptedBlock);
         geckoTile.modelResLoc = new ResourceLocation(model);
         ((TileScripted) scriptedBlock.getMCTileEntity()).needsClientUpdate = true;
     }
 
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public static void setTexture(BlockScriptedWrapper scriptedBlock, String texture) {
+    public static void setGeckoTexture(BlockScriptedWrapper scriptedBlock, String texture) {
         TileEntityCustomModel geckoTile = getOrCreateTECM(scriptedBlock);
         geckoTile.textureResLoc = new ResourceLocation(texture);
         ((TileScripted) scriptedBlock.getMCTileEntity()).needsClientUpdate = true;
     }
 
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public static void setAnimationFile(BlockScriptedWrapper scriptedBlock, String animation) {
+    public static void setGeckoAnimationFile(BlockScriptedWrapper scriptedBlock, String animation) {
         TileEntityCustomModel geckoTile = getOrCreateTECM(scriptedBlock);
         geckoTile.animResLoc = new ResourceLocation(animation);
         ((TileScripted) scriptedBlock.getMCTileEntity()).needsClientUpdate = true;
     }
 
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
-    public static void setIdleAnimation(BlockScriptedWrapper scriptedBlock, String animation) {
+    public static void setGeckoIdleAnimation(BlockScriptedWrapper scriptedBlock, String animation) {
         TileEntityCustomModel geckoTile = getOrCreateTECM(scriptedBlock);
         geckoTile.idleAnimName = animation;
         ((TileScripted) scriptedBlock.getMCTileEntity()).needsClientUpdate = true;
