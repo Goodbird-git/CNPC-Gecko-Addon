@@ -11,6 +11,7 @@ public final class NetworkWrapper {
 
     public static void init() {
         wrapper.registerMessage(PacketSyncAnimation.class, PacketSyncAnimation.class, 0, Side.CLIENT);
+        wrapper.registerMessage(CPacketSyncTileManualAnim.class, CPacketSyncTileManualAnim.class, 1, Side.CLIENT);
     }
 
     public static void sendToPlayer(IMessage message, EntityPlayer player) {
