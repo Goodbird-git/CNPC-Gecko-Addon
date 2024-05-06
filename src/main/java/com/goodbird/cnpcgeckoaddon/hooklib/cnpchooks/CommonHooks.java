@@ -7,13 +7,19 @@ import com.goodbird.cnpcgeckoaddon.hooklib.asm.Hook;
 import com.goodbird.cnpcgeckoaddon.hooklib.asm.ReturnCondition;
 import com.goodbird.cnpcgeckoaddon.network.NetworkWrapper;
 import com.goodbird.cnpcgeckoaddon.network.PacketSyncAnimation;
+import com.goodbird.cnpcgeckoaddon.tile.TileEntityCustomModel;
 import com.goodbird.cnpcgeckoaddon.utils.NpcTextureUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.api.wrapper.NPCWrapper;
 import noppes.npcs.api.wrapper.WrapperNpcAPI;
+import noppes.npcs.blocks.tiles.TileScripted;
 import noppes.npcs.client.EntityUtil;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.entity.data.DataDisplay;
@@ -82,6 +88,32 @@ public class CommonHooks {
                 modelEntity.setSize(data.getWidth(), data.getHeight());
                 npc.updateHitbox();
             }
+        }
+    }
+
+    @Hook(injectOnExit = true)
+    public static void setDisplayNBT(TileScripted tile, NBTTagCompound compound) {
+        if(compound.hasKey("renderTileTag")){
+            tile.renderTile = new TileEntityCustomModel();
+            NBTTagCompound saveTag = compound.getCompoundTag("renderTileTag");
+            if(FMLCommonHandler.instance().getMinecraftServerInstance()!=null && saveTag.hasKey("dimID")){
+
+                World world = FMLCommonHandler.instance().getMinecraftServerInstance().worlds[saveTag.getInteger("dimID")];
+                tile.renderTile.setWorld(world);
+            }
+            tile.renderTile.readFromNBT(saveTag);
+        }
+    }
+
+    @Hook(injectOnExit = true)
+    public static void getDisplayNBT(TileScripted tile, NBTTagCompound compound) {
+        if(tile.renderTile!=null) {
+            NBTTagCompound saveTag = new NBTTagCompound();
+            tile.renderTile.writeToNBT(saveTag);
+            tile.renderTile.getWorld();
+            if(tile.renderTile.getWorld().provider != null)
+                saveTag.setInteger("dimID", tile.renderTile.getWorld().provider.getDimension());
+            compound.setTag("renderTileTag", saveTag);
         }
     }
 }
