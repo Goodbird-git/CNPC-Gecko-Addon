@@ -43,11 +43,15 @@ public interface ICustomModelData {
 
     void setTransitionLengthTicks(int transitionLengthTicks);
 
-    public float getWidth();
+    float getWidth();
 
-    public void setWidth(float width);
+    void setWidth(float width);
 
-    public float getHeight();
+    float getHeight();
 
-    public void setHeight(float height);
+    void setHeight(float height);
+
+    boolean isHurtTintEnabled();
+
+    void setEnableHurtTint(boolean value);
 }

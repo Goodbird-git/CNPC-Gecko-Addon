@@ -56,11 +56,20 @@ public class CommonHooks {
             EntityCustomModel modelEntity = (EntityCustomModel) entity;
             EntityNPCInterface npc = (EntityNPCInterface) copied;
             ICustomModelData data = npc.getCapability(CustomModelDataProvider.DATA_CAP, null);
+
+
+
             modelEntity.textureResLoc = NpcTextureUtils.getNpcTexture((EntityNPCInterface) copied);
             modelEntity.modelResLoc = new ResourceLocation(data.getModel());
             modelEntity.animResLoc = new ResourceLocation(data.getAnimFile());
             modelEntity.idleAnimName = data.getIdleAnim();
             modelEntity.walkAnimName = data.getWalkAnim();
+
+            if(!data.isHurtTintEnabled()){
+                modelEntity.hurtTime = npc.hurtTime = 0;
+                modelEntity.deathTime = npc.deathTime = 0;
+            }
+
             if(npc.inventory.getLeftHand()!=null) {
                 modelEntity.leftHeldItem = npc.inventory.getLeftHand().getMCItemStack();
             }

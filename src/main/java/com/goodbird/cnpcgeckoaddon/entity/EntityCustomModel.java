@@ -30,9 +30,7 @@ public class EntityCustomModel extends EntityCreature implements IAnimatable, IA
     public AnimationBuilder manualAnim = null;
     public AnimationBuilder attackAnim = null;
     public AnimationBuilder hurtAnim = null;
-
     public String headBoneName = "head";
-
     public ItemStack leftHeldItem;
 
     private <E extends IAnimatable> PlayState predicateMovement(AnimationEvent<E> event) {

@@ -12,10 +12,9 @@ public class CustomModelData implements ICustomModelData {
     private String rangedAttackAnim = "";
     private String headBoneName = "head";
     private int transitionLengthTicks = 10;
-
     private float width = 0.7f;
-
     private float height = 2f;
+    private boolean enableHurtTint = true;
 
     public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
         nbttagcompound.setString("Model", model);
@@ -29,6 +28,7 @@ public class CustomModelData implements ICustomModelData {
         nbttagcompound.setInteger("TransitionLengthTicks", transitionLengthTicks);
         nbttagcompound.setFloat("Width",width);
         nbttagcompound.setFloat("Height",height);
+        nbttagcompound.setBoolean("EnableHurtTint",enableHurtTint);
         return nbttagcompound;
     }
 
@@ -53,6 +53,9 @@ public class CustomModelData implements ICustomModelData {
 
             if(nbttagcompound.hasKey("TransitionLengthTicks"))
                 transitionLengthTicks = nbttagcompound.getInteger("TransitionLengthTicks");
+
+            if(nbttagcompound.hasKey("EnableHurtTint"))
+                enableHurtTint = nbttagcompound.getBoolean("EnableHurtTint");
         }
     }
 
@@ -142,5 +145,13 @@ public class CustomModelData implements ICustomModelData {
 
     public void setHeight(float height) {
         this.height = height;
+    }
+
+    public boolean isHurtTintEnabled(){
+        return enableHurtTint;
+    }
+
+    public void setEnableHurtTint(boolean value){
+        this.enableHurtTint = value;
     }
 }

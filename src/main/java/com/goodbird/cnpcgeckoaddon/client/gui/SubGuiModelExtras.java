@@ -39,6 +39,10 @@ public class SubGuiModelExtras extends SubGuiInterface implements ITextfieldList
 
         addLabel(new GuiNpcLabel(4,"Hitbox Height", guiLeft - 85, y + 5,0xffffff));
         addTextField(new GuiNpcTextField(4,this, fontRenderer, guiLeft + 50, y, 200, 20, ""+getModelData(npc).getHeight()));
+        y+=23;
+
+        addLabel(new GuiNpcLabel(5,"Enable Hurt Tint", guiLeft - 85, y + 5,0xffffff));
+        addButton(new GuiNpcButtonYesNo(5, guiLeft + 50, y, 200, 20, getModelData(npc).isHurtTintEnabled()));
 
         addButton(new GuiNpcButton(670, width - 22, 2, 20, 20, "X"));
     }
@@ -50,6 +54,9 @@ public class SubGuiModelExtras extends SubGuiInterface implements ITextfieldList
     @Override
     protected void actionPerformed(GuiButton button) {
         super.actionPerformed(button);
+        if(button.id == 5){
+            getModelData(npc).setEnableHurtTint(((GuiNpcButtonYesNo)button).getBoolean());
+        }
         if(button.id == 670){
             close();
         }
