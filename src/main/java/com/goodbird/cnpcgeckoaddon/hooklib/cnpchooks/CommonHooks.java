@@ -5,18 +5,20 @@ import com.goodbird.cnpcgeckoaddon.data.ICustomModelData;
 import com.goodbird.cnpcgeckoaddon.entity.EntityCustomModel;
 import com.goodbird.cnpcgeckoaddon.hooklib.asm.Hook;
 import com.goodbird.cnpcgeckoaddon.hooklib.asm.ReturnCondition;
+import com.goodbird.cnpcgeckoaddon.network.CPacketSyncTileManualAnim;
 import com.goodbird.cnpcgeckoaddon.network.NetworkWrapper;
 import com.goodbird.cnpcgeckoaddon.network.PacketSyncAnimation;
 import com.goodbird.cnpcgeckoaddon.tile.TileEntityCustomModel;
 import com.goodbird.cnpcgeckoaddon.utils.NpcTextureUtils;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import noppes.npcs.api.block.IBlockScripted;
 import noppes.npcs.api.entity.IPlayer;
+import noppes.npcs.api.wrapper.BlockScriptedWrapper;
 import noppes.npcs.api.wrapper.NPCWrapper;
 import noppes.npcs.api.wrapper.WrapperNpcAPI;
 import noppes.npcs.blocks.tiles.TileScripted;
@@ -45,6 +47,40 @@ public class CommonHooks {
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
     public static AnimationBuilder createAnimBuilder(WrapperNpcAPI api){
         return new AnimationBuilder();
+    }
+
+    private static ICustomModelData getModelData(EntityNPCInterface npc){
+        return npc.getCapability(CustomModelDataProvider.DATA_CAP, null);
+    }
+
+    @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
+    public void setModel(NPCWrapper<EntityNPCInterface> npc, String model) {
+        getModelData(npc.getMCEntity()).setModel(model);
+        npc.updateClient();
+    }
+
+    @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
+    public void setTexture(NPCWrapper<EntityNPCInterface> npc, String texture) {
+        npc.getMCEntity().display.setSkinTexture(texture);
+        npc.updateClient();
+    }
+
+    @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
+    public void setAnimationFile(NPCWrapper<EntityNPCInterface> npc, String animation) {
+        getModelData(npc.getMCEntity()).setAnimFile(animation);
+        npc.updateClient();
+    }
+
+    @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
+    public void setIdleAnimation(NPCWrapper<EntityNPCInterface> npc, String animation) {
+        getModelData(npc.getMCEntity()).setIdleAnim(animation);
+        npc.updateClient();
+    }
+
+    @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
+    public void setWalkAnimation(NPCWrapper<EntityNPCInterface> npc, String animation) {
+        getModelData(npc.getMCEntity()).setWalkAnim(animation);
+        npc.updateClient();
     }
 
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
@@ -115,5 +151,51 @@ public class CommonHooks {
                 saveTag.setInteger("dimID", tile.renderTile.getWorld().provider.getDimension());
             compound.setTag("renderTileTag", saveTag);
         }
+    }
+
+    private static TileEntityCustomModel getOrCreateTECM(IBlockScripted scriptedBlock){
+        TileScripted tile = (TileScripted) scriptedBlock.getMCTileEntity();
+        if(!(tile.renderTile instanceof TileEntityCustomModel)){
+            tile.renderTile = new TileEntityCustomModel();
+        }
+        return (TileEntityCustomModel) tile.renderTile;
+    }
+
+    @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
+    public static void setModel(BlockScriptedWrapper scriptedBlock, String model) {
+        TileEntityCustomModel geckoTile = getOrCreateTECM(scriptedBlock);
+        geckoTile.modelResLoc = new ResourceLocation(model);
+        ((TileScripted) scriptedBlock.getMCTileEntity()).needsClientUpdate = true;
+    }
+
+    @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
+    public static void setTexture(BlockScriptedWrapper scriptedBlock, String texture) {
+        TileEntityCustomModel geckoTile = getOrCreateTECM(scriptedBlock);
+        geckoTile.textureResLoc = new ResourceLocation(texture);
+        ((TileScripted) scriptedBlock.getMCTileEntity()).needsClientUpdate = true;
+    }
+
+    @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
+    public static void setAnimationFile(BlockScriptedWrapper scriptedBlock, String animation) {
+        TileEntityCustomModel geckoTile = getOrCreateTECM(scriptedBlock);
+        geckoTile.animResLoc = new ResourceLocation(animation);
+        ((TileScripted) scriptedBlock.getMCTileEntity()).needsClientUpdate = true;
+    }
+
+    @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
+    public static void setIdleAnimation(BlockScriptedWrapper scriptedBlock, String animation) {
+        TileEntityCustomModel geckoTile = getOrCreateTECM(scriptedBlock);
+        geckoTile.idleAnimName = animation;
+        ((TileScripted) scriptedBlock.getMCTileEntity()).needsClientUpdate = true;
+    }
+
+    @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
+    public static void syncAnimForPlayer(BlockScriptedWrapper scriptedBlock, AnimationBuilder builder, IPlayer<EntityPlayerMP> player) {
+        NetworkWrapper.sendToPlayer(new CPacketSyncTileManualAnim(scriptedBlock.getMCTileEntity(), builder), player.getMCEntity());
+    }
+
+    @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
+    public static void syncAnimForAll(BlockScriptedWrapper scriptedBlock, AnimationBuilder builder) {
+        NetworkWrapper.sendToAll(new CPacketSyncTileManualAnim(scriptedBlock.getMCTileEntity(), builder));
     }
 }
