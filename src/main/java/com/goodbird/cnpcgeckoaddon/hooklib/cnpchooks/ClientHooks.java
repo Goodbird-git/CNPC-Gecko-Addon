@@ -7,16 +7,23 @@ import com.goodbird.cnpcgeckoaddon.data.CustomModelDataProvider;
 import com.goodbird.cnpcgeckoaddon.entity.EntityCustomModel;
 import com.goodbird.cnpcgeckoaddon.hooklib.asm.Hook;
 import com.goodbird.cnpcgeckoaddon.hooklib.asm.ReturnCondition;
+import com.goodbird.cnpcgeckoaddon.tile.TileEntityCustomModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import noppes.npcs.CustomItems;
+import noppes.npcs.blocks.tiles.TileScripted;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.model.GuiCreationEntities;
 import noppes.npcs.client.gui.util.GuiNpcButton;
 import noppes.npcs.client.gui.util.GuiNpcLabel;
 import noppes.npcs.client.renderer.RenderCustomNpc;
+import noppes.npcs.client.renderer.blocks.BlockScriptedRenderer;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.opengl.GL11;
@@ -100,5 +107,29 @@ public class ClientHooks {
         }
     }
 
+    @Hook(targetMethod = "renderTileEntityAt", returnCondition = ReturnCondition.ON_TRUE)
+    @SideOnly(Side.CLIENT)
+    public static boolean customGeckoModelRendering(BlockScriptedRenderer renderer, TileEntity te, double x, double y, double z, float partialTicks) {
+        if(overrideModel()) return false;
+        if(!(te instanceof TileScripted)) return false;
+        TileScripted tileScripted = (TileScripted) te;
+        if(!(tileScripted.renderTile instanceof TileEntityCustomModel)) return false;
+        GL11.glPushMatrix();
+        GL11.glRotatef((float)tileScripted.rotationY, 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef((float)tileScripted.rotationX, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef((float)tileScripted.rotationZ, 0.0F, 0.0F, 1.0F);
+        GL11.glScalef(tileScripted.scaleX, tileScripted.scaleY, tileScripted.scaleZ);
+        TileEntityRendererDispatcher.instance.render(tileScripted.renderTile, x, y, z, partialTicks);
+        GL11.glPopMatrix();
+        return true;
+    }
 
+    private static boolean overrideModel() {
+        ItemStack held = Minecraft.getMinecraft().player.getHeldItemMainhand();
+        if (held == null) {
+            return false;
+        } else {
+            return held.getItem() == CustomItems.wand || held.getItem() == CustomItems.scripter;
+        }
+    }
 }
