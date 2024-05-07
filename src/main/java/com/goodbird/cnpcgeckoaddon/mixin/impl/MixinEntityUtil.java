@@ -38,6 +38,10 @@ public class MixinEntityUtil {
             for(AnimationController controller : animationData.getAnimationControllers().values()){
                 controller.transitionLengthTicks = display.getCustomModelData().getTransitionLengthTicks();
             }
+            if(display.getCustomModelData().getHeight()!=modelEntity.getBbHeight() || display.getCustomModelData().getWidth() != modelEntity.getBbWidth()){
+                modelEntity.setSize(display.getCustomModelData().getWidth(), display.getCustomModelData().getHeight());
+                npc.refreshDimensions();
+            }
         }
     }
 }

@@ -11,6 +11,8 @@ public class CustomModelData {
     private String hurtAnim = "";
     private String headBoneName = "head";
     private int transitionLengthTicks = 10;
+    private float width = 0.7f;
+    private float height = 2f;
 
     public CompoundNBT writeToNBT(CompoundNBT nbttagcompound) {
         nbttagcompound.putString("Model", model);
@@ -21,7 +23,8 @@ public class CustomModelData {
         nbttagcompound.putString("HurtAnim", hurtAnim);
         nbttagcompound.putString("HeadBoneName", headBoneName);
         nbttagcompound.putInt("TransitionLengthTicks", transitionLengthTicks);
-
+        nbttagcompound.putFloat("Width",width);
+        nbttagcompound.putFloat("Height",height);
         return nbttagcompound;
     }
 
@@ -34,9 +37,17 @@ public class CustomModelData {
             hurtAnim = nbttagcompound.getString("HurtAnim");
             attackAnim = nbttagcompound.getString("AttackAnim");
             headBoneName = nbttagcompound.getString("HeadBoneName");
-            if(nbttagcompound.contains("TransitionLengthTicks")) {
+            if(nbttagcompound.contains("HeadBoneName"))
+                headBoneName = nbttagcompound.getString("HeadBoneName");
+
+            if(nbttagcompound.contains("Width"))
+                width = nbttagcompound.getFloat("Width");
+
+            if(nbttagcompound.contains("Height"))
+                height = nbttagcompound.getFloat("Height");
+
+            if(nbttagcompound.contains("TransitionLengthTicks"))
                 transitionLengthTicks = nbttagcompound.getInt("TransitionLengthTicks");
-            }
         }
     }
 
@@ -102,5 +113,21 @@ public class CustomModelData {
 
     public void setTransitionLengthTicks(int transitionLengthTicks) {
         this.transitionLengthTicks = transitionLengthTicks;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public void setWidth(float width) {
+        this.width = width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public void setHeight(float height) {
+        this.height = height;
     }
 }
