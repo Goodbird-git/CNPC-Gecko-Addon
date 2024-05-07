@@ -10,9 +10,15 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.entity.Pose;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerModelPart;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.TextFormatting;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 
@@ -31,6 +37,42 @@ public class RenderCustomModel extends GeoEntityRendererCompat<EntityCustomModel
                                     ResourceLocation textureLocation) {
         return RenderType.entityTranslucent(getTextureLocation(animatable));
     }
+
+    protected void applyRotations(EntityCustomModel entityLiving, MatrixStack matrixStackIn, float ageInTicks, float rotationYaw,
+                                  float partialTicks) {
+        Pose pose = entityLiving.getPose();
+        if (pose != Pose.SLEEPING) {
+            matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0F - rotationYaw));
+        }
+
+        if (entityLiving.deathTime > 0) {
+            float f = ((float) entityLiving.deathTime + partialTicks - 1.0F) / 20.0F * 1.6F;
+            f = MathHelper.sqrt(f);
+            if (f > 1.0F) {
+                f = 1.0F;
+            }
+
+            matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(f * this.getDeathMaxRotation(entityLiving)));
+        } else if (entityLiving.isAutoSpinAttack()) {
+            matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(-90.0F - entityLiving.xRot));
+            matrixStackIn
+                    .mulPose(Vector3f.YP.rotationDegrees(((float) entityLiving.tickCount + partialTicks) * -75.0F));
+        } else if (pose == Pose.SLEEPING) {
+            Direction direction = entityLiving.getBedOrientation();
+            float f1 = direction != null ? getFacingAngle(direction) : rotationYaw;
+            matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(f1));
+            matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(this.getDeathMaxRotation(entityLiving)));
+            matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(270.0F));
+        } else if (entityLiving.hasCustomName()) {
+            String s = TextFormatting.stripFormatting(entityLiving.getName().getString());
+            if ("Dinnerbone".equals(s) || "Grumm".equals(s)) {
+                matrixStackIn.translate(0.0D, entityLiving.getBbHeight() + 0.1F, 0.0D);
+                matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(180.0F));
+            }
+        }
+
+    }
+
 
     @Override
     public void render(GeoModel model, EntityCustomModel animatable, float partialTick, RenderType type, MatrixStack matrixStackIn,

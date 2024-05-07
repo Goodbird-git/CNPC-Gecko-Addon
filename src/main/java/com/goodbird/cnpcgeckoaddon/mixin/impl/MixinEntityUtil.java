@@ -11,6 +11,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.manager.AnimationData;
 
 @Mixin(EntityUtil.class)
 public class MixinEntityUtil {
@@ -30,6 +32,11 @@ public class MixinEntityUtil {
             modelEntity.hurtAnim = display.getCustomModelData().getHurtAnim();
             if(npc.inventory.getLeftHand()!=null) {
                 modelEntity.leftHeldItem = npc.inventory.getLeftHand().getMCItemStack();
+            }
+            modelEntity.headBoneName = display.getCustomModelData().getHeadBoneName();
+            AnimationData animationData = modelEntity.getFactory().getOrCreateAnimationData(modelEntity.getUUID().hashCode());
+            for(AnimationController controller : animationData.getAnimationControllers().values()){
+                controller.transitionLengthTicks = display.getCustomModelData().getTransitionLengthTicks();
             }
         }
     }

@@ -28,6 +28,8 @@ public class EntityCustomModel extends CreatureEntity implements IAnimatable, IA
     public AnimationBuilder dialogAnim = null;
     public AnimationBuilder manualAnim = null;
     public ItemStack leftHeldItem;
+    public String headBoneName = "head";
+
     private <E extends IAnimatable> PlayState predicateMovement(AnimationEvent<E> event) {
         if (manualAnim != null) {
             if (event.getController().getAnimationState() == AnimationState.Stopped) {
