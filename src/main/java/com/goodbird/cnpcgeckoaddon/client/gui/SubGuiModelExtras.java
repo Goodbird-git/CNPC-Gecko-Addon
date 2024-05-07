@@ -6,6 +6,7 @@ import com.goodbird.cnpcgeckoaddon.utils.FloatTextFieldUtils;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.shared.client.gui.components.GuiButtonNop;
+import noppes.npcs.shared.client.gui.components.GuiButtonYesNo;
 import noppes.npcs.shared.client.gui.components.GuiLabel;
 import noppes.npcs.shared.client.gui.components.GuiTextFieldNop;
 import noppes.npcs.shared.client.gui.listeners.ITextfieldListener;
@@ -39,6 +40,10 @@ public class SubGuiModelExtras extends GuiNPCInterface implements ITextfieldList
 
         addLabel(new GuiLabel(4,"Hitbox Height", guiLeft - 85, y + 5,0xffffff));
         addTextField(new GuiTextFieldNop(4,this, guiLeft + 50, y, 200, 20, ""+getModelData(npc).getHeight()));
+        y+=23;
+
+        addLabel(new GuiLabel(5,"Enable Hurt Tint", guiLeft - 85, y + 5,0xffffff));
+        addButton(new GuiButtonYesNo(this, 5, guiLeft + 50, y, 200, 20, getModelData(npc).isHurtTintEnabled()));
 
         addButton(new GuiButtonNop(this, 670, width - 22, 2, 20, 20, "X"));
     }
@@ -49,6 +54,9 @@ public class SubGuiModelExtras extends GuiNPCInterface implements ITextfieldList
 
     @Override
     public void buttonEvent(GuiButtonNop button) {
+        if(button.id == 5){
+            getModelData(npc).setHurtTintEnabled(((GuiButtonYesNo)button).getBoolean());
+        }
         if(button.id == 670){
             close();
         }

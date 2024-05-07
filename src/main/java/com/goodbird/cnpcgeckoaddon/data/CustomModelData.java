@@ -13,7 +13,7 @@ public class CustomModelData {
     private int transitionLengthTicks = 10;
     private float width = 0.7f;
     private float height = 2f;
-
+    private boolean hurtTintEnabled = false;
     public CompoundNBT writeToNBT(CompoundNBT nbttagcompound) {
         nbttagcompound.putString("Model", model);
         nbttagcompound.putString("AnimFile", animFile);
@@ -25,6 +25,7 @@ public class CustomModelData {
         nbttagcompound.putInt("TransitionLengthTicks", transitionLengthTicks);
         nbttagcompound.putFloat("Width",width);
         nbttagcompound.putFloat("Height",height);
+        nbttagcompound.putBoolean("HurtTintEnabled",hurtTintEnabled);
         return nbttagcompound;
     }
 
@@ -48,6 +49,9 @@ public class CustomModelData {
 
             if(nbttagcompound.contains("TransitionLengthTicks"))
                 transitionLengthTicks = nbttagcompound.getInt("TransitionLengthTicks");
+
+            if(nbttagcompound.contains("HurtTintEnabled"))
+                hurtTintEnabled = nbttagcompound.getBoolean("HurtTintEnabled");
         }
     }
 
@@ -129,5 +133,13 @@ public class CustomModelData {
 
     public void setHeight(float height) {
         this.height = height;
+    }
+
+    public boolean isHurtTintEnabled() {
+        return hurtTintEnabled;
+    }
+
+    public void setHurtTintEnabled(boolean value) {
+        this.hurtTintEnabled = value;
     }
 }

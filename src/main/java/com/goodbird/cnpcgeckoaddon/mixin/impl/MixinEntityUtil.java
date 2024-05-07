@@ -30,6 +30,10 @@ public class MixinEntityUtil {
             modelEntity.walkAnim = display.getCustomModelData().getWalkAnim();
             modelEntity.attackAnim = display.getCustomModelData().getAttackAnim();
             modelEntity.hurtAnim = display.getCustomModelData().getHurtAnim();
+            if(display.getCustomModelData().isHurtTintEnabled()){
+                modelEntity.hurtTime = npc.hurtTime;
+                modelEntity.deathTime = npc.deathTime;
+            }
             if(npc.inventory.getLeftHand()!=null) {
                 modelEntity.leftHeldItem = npc.inventory.getLeftHand().getMCItemStack();
             }
