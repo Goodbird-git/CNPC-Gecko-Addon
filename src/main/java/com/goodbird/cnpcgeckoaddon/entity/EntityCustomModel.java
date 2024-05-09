@@ -35,7 +35,7 @@ public class EntityCustomModel extends CreatureEntity implements IAnimatable, IA
 
     private <E extends IAnimatable> PlayState predicateMovement(AnimationEvent<E> event) {
         if (manualAnim != null) {
-            if (event.getController().getAnimationState() == AnimationState.Stopped) {
+            if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() == manualAnim && event.getController().getAnimationState() == AnimationState.Stopped) {
                 manualAnim = null;
             } else {
                 if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() != manualAnim) {
@@ -46,7 +46,7 @@ public class EntityCustomModel extends CreatureEntity implements IAnimatable, IA
             }
         }
         if (dialogAnim != null) {
-            if (event.getController().getAnimationState() == AnimationState.Stopped) {
+            if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() == dialogAnim &&event.getController().getAnimationState() == AnimationState.Stopped) {
                 dialogAnim = null;
             } else {
                 if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() != dialogAnim) {
