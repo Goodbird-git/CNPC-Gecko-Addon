@@ -2,7 +2,9 @@ package com.goodbird.cnpcgeckoaddon.entity;
 
 import com.goodbird.cnpcgeckoaddon.mixin.IAnimationController;
 import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.Pose;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -28,9 +30,12 @@ public class EntityCustomModel extends CreatureEntity implements IAnimatable, IA
     public AnimationBuilder dialogAnim = null;
     public AnimationBuilder manualAnim = null;
     public ItemStack leftHeldItem;
+    public String headBoneName = "head";
+    private EntitySize dims;
+
     private <E extends IAnimatable> PlayState predicateMovement(AnimationEvent<E> event) {
         if (manualAnim != null) {
-            if (event.getController().getAnimationState() == AnimationState.Stopped) {
+            if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() == manualAnim && event.getController().getAnimationState() == AnimationState.Stopped) {
                 manualAnim = null;
             } else {
                 if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() != manualAnim) {
@@ -41,7 +46,7 @@ public class EntityCustomModel extends CreatureEntity implements IAnimatable, IA
             }
         }
         if (dialogAnim != null) {
-            if (event.getController().getAnimationState() == AnimationState.Stopped) {
+            if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() == dialogAnim &&event.getController().getAnimationState() == AnimationState.Stopped) {
                 dialogAnim = null;
             } else {
                 if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() != dialogAnim) {
@@ -72,6 +77,17 @@ public class EntityCustomModel extends CreatureEntity implements IAnimatable, IA
         this.noCulling = true;
     }
 
+    public void setSize(float width, float height) {
+        dims = EntitySize.scalable(width, height);
+    }
+
+    @Override
+    public EntitySize getDimensions(Pose p_213305_1_) {
+        if(dims==null){
+            dims = EntitySize.scalable(0.7F, 2F);
+        }
+        return dims;
+    }
 
     @Override
     public void registerControllers(AnimationData data) {

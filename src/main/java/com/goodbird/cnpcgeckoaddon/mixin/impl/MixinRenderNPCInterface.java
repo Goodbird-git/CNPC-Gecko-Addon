@@ -55,7 +55,7 @@ public abstract class MixinRenderNPCInterface <T extends EntityNPCInterface, M e
     private void cnpcgeckoaddon$renderGeoModel(EntityCustomNpc npc, MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight)
     {
         Entity entity = npc.modelData.getEntity(npc);
-        entity.yRot = entity.yRotO = 0;
+        //entity.yRot = entity.yRotO = 0;
         if (!npc.isInvisible())
         {
             EntityRendererManager lvt_16_1_ = Minecraft.getInstance().getEntityRenderDispatcher();

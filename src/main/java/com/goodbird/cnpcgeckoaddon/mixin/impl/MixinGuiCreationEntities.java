@@ -2,6 +2,7 @@ package com.goodbird.cnpcgeckoaddon.mixin.impl;
 
 import com.goodbird.cnpcgeckoaddon.client.gui.GuiModelAnimation;
 import com.goodbird.cnpcgeckoaddon.client.gui.GuiStringSelection;
+import com.goodbird.cnpcgeckoaddon.client.gui.SubGuiModelExtras;
 import com.goodbird.cnpcgeckoaddon.entity.EntityCustomModel;
 import com.goodbird.cnpcgeckoaddon.mixin.IDataDisplay;
 import net.minecraft.entity.LivingEntity;
@@ -44,6 +45,9 @@ public class MixinGuiCreationEntities extends GuiCreationScreenInterface {
             addLabel(new GuiNpcLabel(213,"Model Animation:", this.guiLeft + 124, this.guiTop + 46,0xffffff));
             this.addButton(new GuiNpcButton(this,212,this.guiLeft + 210, this.guiTop + 40, 100, 20, "selectServer.edit",(b)->{
                 setSubGui(new GuiModelAnimation());
+            }));
+            this.addButton(new GuiButtonNop(this, 213, this.guiLeft + 124, this.guiTop + 60, 187, 20, "Extras", (b)->{
+                setSubGui(new SubGuiModelExtras(this.npc));
             }));
         }
     }
