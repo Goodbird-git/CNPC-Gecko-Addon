@@ -46,7 +46,7 @@ public class MixinGuiCreationEntities extends GuiCreationScreenInterface {
             this.addButton(new GuiNpcButton(this,212,this.guiLeft + 210, this.guiTop + 40, 100, 20, "selectServer.edit",(b)->{
                 setSubGui(new GuiModelAnimation());
             }));
-            this.addButton(new GuiButtonNop(this, 213, this.guiLeft + 124, this.guiTop + 60, 187, 20, "Extras", (b)->{
+            this.addButton(new GuiNpcButton(this, 213, this.guiLeft + 124, this.guiTop + 60, 187, 20, "Extras", (b)->{
                 setSubGui(new SubGuiModelExtras(this.npc));
             }));
         }
