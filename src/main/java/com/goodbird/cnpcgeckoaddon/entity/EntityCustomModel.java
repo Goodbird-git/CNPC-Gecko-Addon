@@ -4,12 +4,12 @@ import com.goodbird.cnpcgeckoaddon.mixin.IAnimationController;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimationTickable;
@@ -33,9 +33,12 @@ public class EntityCustomModel extends Animal implements IAnimatable, IAnimation
     public AnimationBuilder dialogAnim = null;
     public AnimationBuilder manualAnim = null;
     public ItemStack leftHeldItem;
+    public String headBoneName = "head";
+    private EntityDimensions dims;
+
     private <E extends IAnimatable> PlayState predicateMovement(AnimationEvent<E> event) {
         if (manualAnim != null) {
-            if (event.getController().getAnimationState() == AnimationState.Stopped) {
+            if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() == manualAnim && event.getController().getAnimationState() == AnimationState.Stopped) {
                 manualAnim = null;
             } else {
                 if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() != manualAnim) {
@@ -46,7 +49,7 @@ public class EntityCustomModel extends Animal implements IAnimatable, IAnimation
             }
         }
         if (dialogAnim != null) {
-            if (event.getController().getAnimationState() == AnimationState.Stopped) {
+            if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() == dialogAnim &&event.getController().getAnimationState() == AnimationState.Stopped) {
                 dialogAnim = null;
             } else {
                 if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() != dialogAnim) {
@@ -77,6 +80,17 @@ public class EntityCustomModel extends Animal implements IAnimatable, IAnimation
         this.noCulling = true;
     }
 
+    public void setSize(float width, float height) {
+        dims = EntityDimensions.scalable(width, height);
+    }
+
+    @Override
+    public EntityDimensions getDimensions(Pose p_213305_1_) {
+        if(dims==null){
+            dims = EntityDimensions.scalable(0.7F, 2F);
+        }
+        return dims;
+    }
 
     @Override
     public void registerControllers(AnimationData data) {
@@ -99,7 +113,6 @@ public class EntityCustomModel extends Animal implements IAnimatable, IAnimation
         super.tick();
     }
 
-    @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel p_146743_, AgeableMob p_146744_) {
         return null;

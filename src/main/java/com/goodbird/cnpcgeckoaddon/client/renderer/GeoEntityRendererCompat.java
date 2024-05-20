@@ -372,7 +372,7 @@ public abstract class GeoEntityRendererCompat<T extends LivingEntity & IAnimatab
         return !animatable.isInvisible();
     }
 
-    private static float getFacingAngle(Direction direction) {
+    static float getFacingAngle(Direction direction) {
         return switch (direction) {
             case SOUTH -> 90f;
             case NORTH -> 270f;

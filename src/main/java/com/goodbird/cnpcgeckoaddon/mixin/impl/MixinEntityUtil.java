@@ -11,6 +11,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.manager.AnimationData;
 
 @Mixin(EntityUtil.class)
 public class MixinEntityUtil {
@@ -28,8 +30,21 @@ public class MixinEntityUtil {
             modelEntity.walkAnim = display.getCustomModelData().getWalkAnim();
             modelEntity.attackAnim = display.getCustomModelData().getAttackAnim();
             modelEntity.hurtAnim = display.getCustomModelData().getHurtAnim();
+            if(display.getCustomModelData().isHurtTintEnabled()){
+                modelEntity.hurtTime = npc.hurtTime;
+                modelEntity.deathTime = npc.deathTime;
+            }
             if(npc.inventory.getLeftHand()!=null) {
                 modelEntity.leftHeldItem = npc.inventory.getLeftHand().getMCItemStack();
+            }
+            modelEntity.headBoneName = display.getCustomModelData().getHeadBoneName();
+            AnimationData animationData = modelEntity.getFactory().getOrCreateAnimationData(modelEntity.getUUID().hashCode());
+            for(AnimationController controller : animationData.getAnimationControllers().values()){
+                controller.transitionLengthTicks = display.getCustomModelData().getTransitionLengthTicks();
+            }
+            if(display.getCustomModelData().getHeight()!=modelEntity.getBbHeight() || display.getCustomModelData().getWidth() != modelEntity.getBbWidth()){
+                modelEntity.setSize(display.getCustomModelData().getWidth(), display.getCustomModelData().getHeight());
+                npc.refreshDimensions();
             }
         }
     }
