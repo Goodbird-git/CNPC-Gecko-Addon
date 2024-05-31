@@ -5,6 +5,7 @@ import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.Pose;
+import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -108,5 +109,13 @@ public class EntityCustomModel extends CreatureEntity implements IAnimatable, IA
     @Override
     public void tick() {
         super.tick();
+    }
+
+    public double getAttributeValue(Attribute p_233637_1_) {
+        try {
+            return this.getAttributes().getValue(p_233637_1_);
+        }catch (Exception e){
+            return 1.0;
+        }
     }
 }
