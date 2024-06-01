@@ -7,6 +7,7 @@
     "MixinAnimationController",
     "MixinBlockScriptedWrapper",
     "MixinDataDisplay",
+    "MixinEntityCustomNpc",
     "MixinEntityUtil",
     "MixinNpcWrapper",
     "MixinWrapperNpcApi",
