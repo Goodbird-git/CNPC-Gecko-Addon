@@ -11,6 +11,7 @@ import com.goodbird.cnpcgeckoaddon.network.NetworkWrapper;
 import com.goodbird.cnpcgeckoaddon.network.PacketSyncAnimation;
 import com.goodbird.cnpcgeckoaddon.tile.TileEntityCustomModel;
 import com.goodbird.cnpcgeckoaddon.utils.NpcTextureUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,6 +26,7 @@ import noppes.npcs.api.wrapper.NPCWrapper;
 import noppes.npcs.api.wrapper.WrapperNpcAPI;
 import noppes.npcs.blocks.tiles.TileScripted;
 import noppes.npcs.client.EntityUtil;
+import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.entity.data.DataDisplay;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -92,6 +94,19 @@ public class CommonHooks {
     @Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
     public static void syncAnimationsForAll(NPCWrapper<EntityNPCInterface> wrapper, AnimationBuilder builder) {
         NetworkWrapper.sendToAll(new PacketSyncAnimation(wrapper.getMCEntity(), builder));
+    }
+
+    @Hook(injectOnExit = true)
+    public static void onUpdate(EntityCustomNpc npc) {
+        ICustomModelData data = npc.getCapability(CustomModelDataProvider.DATA_CAP, null);
+        if(data==null) return;
+        Entity entity = npc.modelData.getEntity(npc);
+        if (!(entity instanceof EntityCustomModel)) return;
+        EntityCustomModel modelEntity = (EntityCustomModel) entity;
+        if (data.getHeight() != modelEntity.height || data.getWidth() != modelEntity.width) {
+            modelEntity.setSize(data.getWidth(), data.getHeight());
+            npc.updateHitbox();
+        }
     }
 
     @Hook(injectOnExit = true)
