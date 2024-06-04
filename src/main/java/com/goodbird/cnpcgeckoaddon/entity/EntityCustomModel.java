@@ -1,11 +1,10 @@
 package com.goodbird.cnpcgeckoaddon.entity;
 
 import com.goodbird.cnpcgeckoaddon.mixin.IAnimationController;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.ai.attributes.Attribute;
+import com.goodbird.cnpcgeckoaddon.mixin.impl.IAttributeModifierManager;
+import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierManager;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -18,6 +17,8 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+
+import javax.annotation.Nonnull;
 
 public class EntityCustomModel extends CreatureEntity implements IAnimatable, IAnimationTickable {
     private AnimationFactory factory = new AnimationFactory(this);
@@ -111,11 +112,12 @@ public class EntityCustomModel extends CreatureEntity implements IAnimatable, IA
         super.tick();
     }
 
-    public double getAttributeValue(Attribute p_233637_1_) {
-        try {
-            return this.getAttributes().getValue(p_233637_1_);
-        }catch (Exception e){
-            return 1.0;
+    @Nonnull
+    public AttributeModifierManager getAttributes() {
+        AttributeModifierManager superMgr = super.getAttributes();
+        if(((IAttributeModifierManager)superMgr).getSupplier() == null){
+            ((IAttributeModifierManager)superMgr).setSupplier(LivingEntity.createLivingAttributes().add(Attributes.FOLLOW_RANGE).build());
         }
+        return super.getAttributes();
     }
 }

@@ -5,6 +5,7 @@
   "refmap": "mixins.cnpcgeckoaddon.refmap.json",
   "mixins": [
     "MixinAnimationController",
+    "IAttributeModifierManager",
     "MixinBlockScriptedWrapper",
     "MixinDataDisplay",
     "MixinEntityCustomNpc",
