@@ -10,7 +10,7 @@ import noppes.npcs.shared.client.gui.components.GuiLabel;
 import noppes.npcs.shared.client.gui.components.GuiTextFieldNop;
 import noppes.npcs.shared.client.gui.listeners.ITextfieldListener;
 import com.goodbird.cnpcgeckoaddon.utils.AnimationFileUtil;
-import software.bernie.geckolib3.resource.GeckoLibCache;
+import software.bernie.geckolib.cache.GeckoLibCache;
 
 public class GuiModelAnimation extends GuiNPCInterface implements ITextfieldListener {
 
@@ -68,7 +68,7 @@ public class GuiModelAnimation extends GuiNPCInterface implements ITextfieldList
     }
 
     public boolean isValidAnimFile(String name){
-        return GeckoLibCache.getInstance().getAnimations().containsKey(new ResourceLocation(name));
+        return GeckoLibCache.getBakedAnimations().containsKey(new ResourceLocation(name));
     }
 
     public boolean isValidAnimation(String name){

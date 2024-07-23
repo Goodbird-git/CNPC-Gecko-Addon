@@ -1,9 +1,9 @@
 package com.goodbird.cnpcgeckoaddon.utils;
 
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib3.core.builder.Animation;
-import software.bernie.geckolib3.file.AnimationFile;
-import software.bernie.geckolib3.resource.GeckoLibCache;
+import software.bernie.geckolib.cache.GeckoLibCache;
+import software.bernie.geckolib.core.animation.Animation;
+import software.bernie.geckolib.loading.object.BakedAnimations;
 
 import java.util.List;
 import java.util.Vector;
@@ -11,10 +11,10 @@ import java.util.Vector;
 public class AnimationFileUtil {
     public static List<String> getAnimationList(String animFileName) {
         Vector<String> list = new Vector<>();
-        AnimationFile file = GeckoLibCache.getInstance().getAnimations().get(new ResourceLocation(animFileName));
+        BakedAnimations file = GeckoLibCache.getBakedAnimations().get(new ResourceLocation(animFileName));
         if (file != null) {
-            for (Animation anim : file.getAllAnimations()) {
-                list.add(anim.animationName);
+            for (Animation anim : file.animations().values()) {
+                list.add(anim.name());
             }
         }
         return list;
@@ -22,7 +22,7 @@ public class AnimationFileUtil {
 
     public static List<String> getAnimationFileList() {
         Vector<String> list = new Vector<>();
-        for (ResourceLocation resLoc : GeckoLibCache.getInstance().getAnimations().keySet()) {
+        for (ResourceLocation resLoc : GeckoLibCache.getBakedAnimations().keySet()) {
             list.add(resLoc.toString());
         }
         return list;

@@ -2,7 +2,7 @@ package com.goodbird.cnpcgeckoaddon.mixin.impl;
 
 import com.goodbird.cnpcgeckoaddon.tile.TileEntityCustomModel;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
@@ -27,9 +27,9 @@ public abstract class MixinBlockScriptedRenderer {
         if(!(tileScripted.renderTile instanceof TileEntityCustomModel)) return;
         matrixStack.pushPose();
         matrixStack.translate(0.5,0.5, 0.5);
-        matrixStack.mulPose(Vector3f.YP.rotationDegrees((float)tileScripted.rotationY));
-        matrixStack.mulPose(Vector3f.XP.rotationDegrees((float)tileScripted.rotationX));
-        matrixStack.mulPose(Vector3f.ZP.rotationDegrees((float)tileScripted.rotationZ));
+        matrixStack.mulPose(Axis.YP.rotationDegrees((float)tileScripted.rotationY));
+        matrixStack.mulPose(Axis.XP.rotationDegrees((float)tileScripted.rotationX));
+        matrixStack.mulPose(Axis.ZP.rotationDegrees((float)tileScripted.rotationZ));
         matrixStack.scale(tileScripted.scaleX, tileScripted.scaleY, tileScripted.scaleZ);
         matrixStack.translate(-0.5,-0.5/tileScripted.scaleY, -0.5);
         Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(tileScripted.renderTile).render(tileScripted.renderTile, partialTicks, matrixStack, buffer, light, overlay);

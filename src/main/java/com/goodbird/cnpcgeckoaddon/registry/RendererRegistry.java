@@ -14,6 +14,6 @@ public class RendererRegistry {
     @SubscribeEvent
     public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(EntityRegistry.entityCustomModel, RenderCustomModel::new);
-        event.registerBlockEntityRenderer(TileEntityRegistry.tileEntityCustomModel, RenderTileCustomModel::new);
+        event.registerBlockEntityRenderer(TileEntityRegistry.tileEntityCustomModel, context -> new RenderTileCustomModel());
     }
 }

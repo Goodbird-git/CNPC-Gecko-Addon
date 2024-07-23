@@ -11,8 +11,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.manager.AnimationData;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
 
 @Mixin(EntityUtil.class)
 public class MixinEntityUtil {
@@ -38,9 +38,10 @@ public class MixinEntityUtil {
                 modelEntity.leftHeldItem = npc.inventory.getLeftHand().getMCItemStack();
             }
             modelEntity.headBoneName = display.getCustomModelData().getHeadBoneName();
-            AnimationData animationData = modelEntity.getFactory().getOrCreateAnimationData(modelEntity.getUUID().hashCode());
-            for(AnimationController controller : animationData.getAnimationControllers().values()){
-                controller.transitionLengthTicks = display.getCustomModelData().getTransitionLengthTicks();
+            AnimatableManager animationData = modelEntity.getAnimatableInstanceCache().getManagerForId(modelEntity.getUUID().hashCode());
+            for(Object obj : animationData.getAnimationControllers().values()){
+                AnimationController controller = (AnimationController) obj;
+                controller.transitionLength(display.getCustomModelData().getTransitionLengthTicks());
             }
             if(display.getCustomModelData().getHeight()!=modelEntity.getBbHeight() || display.getCustomModelData().getWidth() != modelEntity.getBbWidth()){
                 modelEntity.setSize(display.getCustomModelData().getWidth(), display.getCustomModelData().getHeight());

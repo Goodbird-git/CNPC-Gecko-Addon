@@ -8,23 +8,25 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.RegisterEvent;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = CNPCGeckoAddon.MODID)
-@ObjectHolder(CNPCGeckoAddon.MODID)
 public class EntityRegistry {
 
-    @ObjectHolder("custommodelentity")
+    @ObjectHolder(registryName ="entity_type", value = CNPCGeckoAddon.MODID+":custommodelentity")
     public static EntityType<? extends EntityCustomModel> entityCustomModel;
 
     @SubscribeEvent
-    public static void registerEntities(final RegistryEvent.Register<EntityType<?>> event) {
-        registerNewentity(event.getRegistry(), EntityCustomModel.class, "custommodelentity", EntityCustomModel::new, 64, 10, false, 0.7F, 2F);
+    public static void registerEntities(RegisterEvent event) {
+        if (event.getRegistryKey() == ForgeRegistries.Keys.ENTITY_TYPES) {
+            registerNewentity(event.getForgeRegistry(), EntityCustomModel.class, "custommodelentity", EntityCustomModel::new, 64, 10, false, 0.7F, 2F);
+        }
     }
 
     private static <T extends Entity> void registerNewentity(final IForgeRegistry<EntityType<?>> registry, final Class<? extends Entity> c, final String name, final EntityType.EntityFactory<T> factoryIn, final int range, final int update, final boolean velocity, final float width, final float height) {
@@ -35,7 +37,7 @@ public class EntityRegistry {
         builder.sized(width, height);
         builder.clientTrackingRange(4);
         final ResourceLocation registryName = new ResourceLocation(CNPCGeckoAddon.MODID, name);
-        registry.register(builder.build(registryName.toString()).setRegistryName(registryName));
+        registry.register(registryName, builder.build(registryName.toString()));
     }
 
 

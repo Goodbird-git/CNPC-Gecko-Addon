@@ -11,7 +11,7 @@ import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.packets.Packets;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib.core.animation.RawAnimation;
 
 @Mixin(NPCWrapper.class)
 public class MixinNpcWrapper<T extends EntityNPCInterface> extends EntityLivingWrapper<T> {
@@ -55,11 +55,11 @@ public class MixinNpcWrapper<T extends EntityNPCInterface> extends EntityLivingW
     }
 
     @Unique
-    public void syncAnimationsFor(IPlayer player, AnimationBuilder builder) {
+    public void syncAnimationsFor(IPlayer player, RawAnimation builder) {
         NetworkWrapper.sendToPlayer(new PacketSyncAnimation(entity.getId(),builder), player.getMCEntity());
     }
     @Unique
-    public void syncAnimationsForAll(AnimationBuilder builder) {
+    public void syncAnimationsForAll(RawAnimation builder) {
         NetworkWrapper.sendToAll(new PacketSyncAnimation(entity.getId(),builder));
     }
 }

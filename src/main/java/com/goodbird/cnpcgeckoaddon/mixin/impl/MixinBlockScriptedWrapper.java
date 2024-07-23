@@ -14,7 +14,7 @@ import noppes.npcs.api.wrapper.BlockWrapper;
 import noppes.npcs.blocks.tiles.TileScripted;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib.core.animation.RawAnimation;
 
 @Mixin(BlockScriptedWrapper.class)
 public abstract class MixinBlockScriptedWrapper extends BlockWrapper {
@@ -62,12 +62,12 @@ public abstract class MixinBlockScriptedWrapper extends BlockWrapper {
     }
 
     @Unique
-    public void syncAnimForPlayer(AnimationBuilder builder, IPlayer<ServerPlayer> player) {
+    public void syncAnimForPlayer(RawAnimation builder, IPlayer<ServerPlayer> player) {
         NetworkWrapper.sendToPlayer(new PacketSyncTileAnimation(getMCTileEntity().getBlockPos(), builder), player.getMCEntity());
     }
 
     @Unique
-    public void syncAnimForAll(AnimationBuilder builder) {
+    public void syncAnimForAll(RawAnimation builder) {
         NetworkWrapper.sendToAll(new PacketSyncTileAnimation(getMCTileEntity().getBlockPos(), builder));
     }
 }

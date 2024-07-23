@@ -1,6 +1,6 @@
 package com.goodbird.cnpcgeckoaddon.entity;
 
-import com.goodbird.cnpcgeckoaddon.mixin.IAnimationController;
+import com.goodbird.cnpcgeckoaddon.CNPCGeckoAddon;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AgeableMob;
@@ -11,70 +11,70 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import software.bernie.geckolib3.core.AnimationState;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.IAnimationTickable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class EntityCustomModel extends Animal implements IAnimatable, IAnimationTickable {
-    private AnimationFactory factory = GeckoLibUtil.createFactory(this);
-    public ResourceLocation modelResLoc=new ResourceLocation("geckolib3", "geo/bike.geo.json");
-    public ResourceLocation animResLoc=new ResourceLocation("geckolib3", "bike.animation.json");
-    public ResourceLocation textureResLoc = new ResourceLocation("geckolib3", "textures/model/entity/bike.png");
+public class EntityCustomModel extends Animal implements GeoAnimatable, GeoEntity {
+    private AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
+    public ResourceLocation modelResLoc=new ResourceLocation(CNPCGeckoAddon.MODID, "geo/geo_npc.geo.json");
+    public ResourceLocation animResLoc=new ResourceLocation(CNPCGeckoAddon.MODID , "animations/geo_npc.animation.json");
+    public ResourceLocation textureResLoc = new ResourceLocation("customnpcs","textures/entity/humanmale/steve.png");
     public String idleAnim = "";
     public String walkAnim = "";
     public String hurtAnim = "";
     public String attackAnim = "";
-    public AnimationBuilder dialogAnim = null;
-    public AnimationBuilder manualAnim = null;
+    public RawAnimation dialogAnim = null;
+    public RawAnimation manualAnim = null;
     public ItemStack leftHeldItem;
     public String headBoneName = "head";
     private EntityDimensions dims;
 
-    private <E extends IAnimatable> PlayState predicateMovement(AnimationEvent<E> event) {
+    private PlayState predicateMovement(AnimationState<EntityCustomModel> event) {
         if (manualAnim != null) {
-            if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() == manualAnim && event.getController().getAnimationState() == AnimationState.Stopped) {
+            if (event.getController().getCurrentRawAnimation() == manualAnim && event.getController().getAnimationState() == AnimationController.State.STOPPED) {
                 manualAnim = null;
             } else {
-                if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() != manualAnim) {
-                    event.getController().markNeedsReload();
+                if (event.getController().getCurrentRawAnimation() != manualAnim) {
+                    event.getController().forceAnimationReset();
                 }
                 event.getController().setAnimation(manualAnim);
                 return PlayState.CONTINUE;
             }
         }
         if (dialogAnim != null) {
-            if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() == dialogAnim &&event.getController().getAnimationState() == AnimationState.Stopped) {
+            if (event.getController().getCurrentRawAnimation() == dialogAnim &&event.getController().getAnimationState() == AnimationController.State.STOPPED) {
                 dialogAnim = null;
             } else {
-                if (((IAnimationController)event.getController()).getCurrentAnimationBuilder() != dialogAnim) {
-                    event.getController().markNeedsReload();
+                if (event.getController().getCurrentRawAnimation() != dialogAnim) {
+                    event.getController().forceAnimationReset();
                 }
                 event.getController().setAnimation(dialogAnim);
                 return PlayState.CONTINUE;
             }
         }
-        if (!event.isMoving() || walkAnim.isEmpty()) {
+        if ((event.getLimbSwingAmount() > -0.15F && event.getLimbSwingAmount() < 0.15F) || walkAnim.isEmpty()) {
             if (!idleAnim.isEmpty()) {
-                event.getController().setAnimation(new AnimationBuilder().loop(idleAnim));
+                event.getController().setAnimation(RawAnimation.begin().thenLoop(idleAnim));
             } else {
                 return PlayState.STOP;
             }
         } else {
-            event.getController().setAnimation(new AnimationBuilder().loop(walkAnim));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop(walkAnim));
         }
         return PlayState.CONTINUE;
     }
 
-    private <E extends IAnimatable> PlayState predicateAttack(AnimationEvent<E> event) {
-        return PlayState.CONTINUE;
-    }
+//    private <E extends IAnimatable> PlayState predicateAttack(AnimationEvent<E> event) {
+//        return PlayState.CONTINUE;
+//    }
 
     public EntityCustomModel(EntityType<? extends Animal> type, Level worldIn) {
         super(type, worldIn);
@@ -94,18 +94,18 @@ public class EntityCustomModel extends Animal implements IAnimatable, IAnimation
     }
 
     @Override
-    public void registerControllers(AnimationData data) {
-        data.addAnimationController(new AnimationController<>(this, "movement", 10, this::predicateMovement));
-        data.addAnimationController(new AnimationController<>(this, "attack", 10, this::predicateAttack));
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "movement", 10, this::predicateMovement));
+        //controllers.add(new AnimationController<>(this, "attack", 10, this::predicateAttack));
     }
 
     @Override
-    public AnimationFactory getFactory() {
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.factory;
     }
 
     @Override
-    public int tickTimer() {
+    public double getTick(Object entity) {
         return tickCount;
     }
 

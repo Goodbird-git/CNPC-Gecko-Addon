@@ -5,6 +5,7 @@ import com.goodbird.cnpcgeckoaddon.client.gui.GuiStringSelection;
 import com.goodbird.cnpcgeckoaddon.client.gui.SubGuiModelExtras;
 import com.goodbird.cnpcgeckoaddon.entity.EntityCustomModel;
 import com.goodbird.cnpcgeckoaddon.mixin.IDataDisplay;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import noppes.npcs.client.gui.model.GuiCreationEntities;
@@ -16,7 +17,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import software.bernie.geckolib3.resource.GeckoLibCache;
+import software.bernie.geckolib.cache.GeckoLibCache;
 
 import java.util.Vector;
 
@@ -32,7 +33,7 @@ public class MixinGuiCreationEntities extends GuiCreationScreenInterface {
         if(npc instanceof EntityCustomNpc && ((EntityCustomNpc)npc).modelData.getEntity(npc) instanceof EntityCustomModel) {
             EntityCustomModel customModel = (EntityCustomModel) ((EntityCustomNpc)npc).modelData.getEntity(npc);
             Vector<String> list = new Vector<>();
-            for(ResourceLocation resLoc : GeckoLibCache.getInstance().getGeoModels().keySet()){
+            for(ResourceLocation resLoc : GeckoLibCache.getBakedModels().keySet()){
                 list.add(resLoc.toString());
             }
             addLabel(new GuiLabel(212,"Model:", this.guiLeft + 124, this.guiTop + 26,0xffffff));
@@ -53,9 +54,9 @@ public class MixinGuiCreationEntities extends GuiCreationScreenInterface {
     }
 
     @Override
-    public void drawNpc(LivingEntity entity, int x, int y, float zoomed, int rotation) {
+    public void drawNpc(GuiGraphics graphics, LivingEntity entity, int x, int y, float zoomed, int rotation) {
         if(wrapper.subgui==null) {
-            super.drawNpc(entity, x, y, zoomed, rotation);
+            super.drawNpc(graphics, entity, x, y, zoomed, rotation);
         }
     }
 }

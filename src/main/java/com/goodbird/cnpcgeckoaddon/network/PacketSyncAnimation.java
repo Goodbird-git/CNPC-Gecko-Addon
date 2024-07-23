@@ -8,17 +8,17 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
 import noppes.npcs.entity.EntityCustomNpc;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.builder.ILoopType;
-import software.bernie.geckolib3.core.builder.RawAnimation;
+import software.bernie.geckolib.core.animation.Animation;
+import software.bernie.geckolib.core.animation.RawAnimation;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class PacketSyncAnimation {
     private int id;
-    private AnimationBuilder builder;
+    private RawAnimation builder;
 
-    public PacketSyncAnimation(int entityId, AnimationBuilder builder) {
+    public PacketSyncAnimation(int entityId, RawAnimation builder) {
         this.id = entityId;
         this.builder = builder;
     }
@@ -32,11 +32,11 @@ public class PacketSyncAnimation {
 
         CompoundTag compound = new CompoundTag();
         ListTag animList = new ListTag();
-        for(RawAnimation anim: builder.getRawAnimationList()){
+        for(RawAnimation.Stage anim: builder.getAnimationStages()){
             CompoundTag animTag = new CompoundTag();
-            animTag.putString("name", anim.animationName);
-            if(anim.loopType!=null) {
-                animTag.putInt("loop", ((ILoopType.EDefaultLoopTypes) anim.loopType).ordinal());
+            animTag.putString("name", anim.animationName());
+            if(anim.loopType()!=null) {
+                animTag.putString("loop", getNameFromLoopType(anim.loopType()));
             }else{
                 animTag.putInt("loop",1);
             }
@@ -46,15 +46,23 @@ public class PacketSyncAnimation {
         buf.writeNbt(compound);
     }
 
+    private String getNameFromLoopType(Animation.LoopType type){
+        for(Map.Entry<String, Animation.LoopType> entry : Animation.LoopType.LOOP_TYPES.entrySet()){
+            if(entry.getValue()==type){
+                return entry.getKey();
+            }
+        }
+        return "play_once";
+    }
+
     public static PacketSyncAnimation decode(FriendlyByteBuf buf) {
         int id = buf.readInt();
-        AnimationBuilder builder = new AnimationBuilder();
+        RawAnimation builder = RawAnimation.begin();
         CompoundTag compound = buf.readNbt();
         ListTag animList = compound.getList("anims",10);
         for(int i=0;i<animList.size();i++){
             CompoundTag animTag = (CompoundTag) animList.get(i);
-            builder.addAnimation(animTag.getString("name"),
-                    ILoopType.EDefaultLoopTypes.values()[animTag.getInt("loop")]);
+            builder.then(animTag.getString("name"), Animation.LoopType.fromString(animTag.getString("loop")));
         }
         return new PacketSyncAnimation(id,builder);
     }
