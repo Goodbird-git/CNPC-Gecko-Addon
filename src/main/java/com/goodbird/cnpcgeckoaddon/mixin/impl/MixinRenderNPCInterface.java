@@ -65,21 +65,17 @@ public abstract class MixinRenderNPCInterface <T extends EntityNPCInterface, M e
         }
         else if (!npc.isInvisibleTo(Minecraft.getInstance().player))
         {
-            GL11.glPushMatrix();
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.15F);
-            GL11.glDepthMask(false);
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.15F);
+            RenderSystem.depthMask(false);
+            RenderSystem.enableBlend();
+            RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             EntityRenderDispatcher lvt_16_1_ = Minecraft.getInstance().getEntityRenderDispatcher();
             lvt_16_1_.setRenderShadow(false);
             RenderSystem.runAsFancy(() -> {
                 lvt_16_1_.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack, buffer,packedLight);
             });
-            GL11.glDisable(GL11.GL_BLEND);
-            GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
-            GL11.glPopMatrix();
-            GL11.glDepthMask(true);
+            RenderSystem.disableBlend();
+            RenderSystem.depthMask(true);
         }
     }
 }
