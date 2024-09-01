@@ -1,12 +1,13 @@
 package com.goodbird.cnpcgeckoaddon.data;
 
+import com.goodbird.cnpcgeckoaddon.CNPCGeckoAddon;
 import net.minecraft.nbt.CompoundTag;
 
 public class CustomModelData {
-    private String model = "geckolib3:geo/bike.geo.json";
-    private String animFile = "geckolib3:animations/bike.animation.json";
-    private String idleAnim = "animation.bike.idle";
-    private String walkAnim = "";
+    private String model = CNPCGeckoAddon.MODID+":geo/geo_npc.geo.json";
+    private String animFile = CNPCGeckoAddon.MODID+":animations/geo_npc.animation.json";
+    private String idleAnim = "idle";
+    private String walkAnim = "walk";
     private String attackAnim = "";
     private String hurtAnim = "";
     private String headBoneName = "head";

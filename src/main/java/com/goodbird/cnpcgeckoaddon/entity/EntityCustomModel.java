@@ -1,5 +1,6 @@
 package com.goodbird.cnpcgeckoaddon.entity;
 
+import com.goodbird.cnpcgeckoaddon.CNPCGeckoAddon;
 import com.goodbird.cnpcgeckoaddon.mixin.IAnimationController;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -24,9 +25,9 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
 
 public class EntityCustomModel extends Animal implements IAnimatable, IAnimationTickable {
     private AnimationFactory factory = GeckoLibUtil.createFactory(this);
-    public ResourceLocation modelResLoc=new ResourceLocation("geckolib3", "geo/bike.geo.json");
-    public ResourceLocation animResLoc=new ResourceLocation("geckolib3", "bike.animation.json");
-    public ResourceLocation textureResLoc = new ResourceLocation("geckolib3", "textures/model/entity/bike.png");
+    public ResourceLocation modelResLoc=new ResourceLocation(CNPCGeckoAddon.MODID, "geo/geo_npc.geo.json");
+    public ResourceLocation animResLoc=new ResourceLocation(CNPCGeckoAddon.MODID , "animations/geo_npc.animation.json");
+    public ResourceLocation textureResLoc = new ResourceLocation("customnpcs","textures/entity/humanmale/steve.png");
     public String idleAnim = "";
     public String walkAnim = "";
     public String hurtAnim = "";

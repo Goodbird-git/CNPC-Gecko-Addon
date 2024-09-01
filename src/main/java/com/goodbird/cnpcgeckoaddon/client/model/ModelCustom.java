@@ -9,8 +9,9 @@ import software.bernie.geckolib3.model.provider.data.EntityModelData;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 
 public class ModelCustom extends AnimatedGeoModel<EntityCustomModel> {
+
     @Override
-    public ResourceLocation getAnimationFileLocation(EntityCustomModel entity) {
+    public ResourceLocation getAnimationResource(EntityCustomModel entity) {
         if(!GeckoLibCache.getInstance().getAnimations().containsKey(entity.animResLoc)){
             return new ResourceLocation("cnpcgeckoaddon","animations/none.animations.json");
         }
@@ -18,7 +19,7 @@ public class ModelCustom extends AnimatedGeoModel<EntityCustomModel> {
     }
 
     @Override
-    public ResourceLocation getModelLocation(EntityCustomModel entity) {
+    public ResourceLocation getModelResource(EntityCustomModel entity) {
         if(!GeckoLibCache.getInstance().getGeoModels().containsKey(entity.modelResLoc)){
             return new ResourceLocation("cnpcgeckoaddon","geo/modelnotfound.geo.json");
         }
@@ -29,7 +30,7 @@ public class ModelCustom extends AnimatedGeoModel<EntityCustomModel> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(EntityCustomModel entity) {
+    public ResourceLocation getTextureResource(EntityCustomModel entity) {
         if(!GeckoLibCache.getInstance().getGeoModels().containsKey(entity.modelResLoc)){
             return new ResourceLocation("cnpcgeckoaddon","textures/model/alphabet.png");
         }

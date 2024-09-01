@@ -183,7 +183,7 @@ public abstract class GeoEntityRendererCompat<T extends LivingEntity & IAnimatab
 
         AnimationEvent<T> predicate = new AnimationEvent<T>(animatable, limbSwing, limbSwingAmount, partialTick,
                 (limbSwingAmount <= -getSwingMotionAnimThreshold() || limbSwingAmount > getSwingMotionAnimThreshold()), Collections.singletonList(entityModelData));
-        GeoModel model = this.modelProvider.getModel(this.modelProvider.getModelLocation(animatable));
+        GeoModel model = this.modelProvider.getModel(this.modelProvider.getModelResource(animatable));
 
         this.modelProvider.setCustomAnimations(animatable, getInstanceId(animatable), predicate); // TODO change to setCustomAnimations in 1.20+
 
@@ -285,7 +285,7 @@ public abstract class GeoEntityRendererCompat<T extends LivingEntity & IAnimatab
      * Use {@link IGeoRenderer#getInstanceId(Object)}<br>
      * Remove in 1.20+
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated
     public Integer getUniqueID(T animatable) {
         return getInstanceId(animatable);
     }
@@ -322,7 +322,7 @@ public abstract class GeoEntityRendererCompat<T extends LivingEntity & IAnimatab
      * Use {@link software.bernie.geckolib3.renderers.geo.GeoEntityRenderer#getOverlay(T, float)}<br>
      * Remove in 1.20+
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated
     public int getPackedOverlay(LivingEntity entity, float u) {
         return this.getOverlay(animatable, u);
     }
@@ -408,7 +408,7 @@ public abstract class GeoEntityRendererCompat<T extends LivingEntity & IAnimatab
 
     @Override
     public ResourceLocation getTextureLocation(T animatable) {
-        return this.modelProvider.getTextureLocation(animatable);
+        return this.modelProvider.getTextureResource(animatable);
     }
 
     public final boolean addLayer(GeoLayerRenderer<T> layer) {
@@ -490,7 +490,7 @@ public abstract class GeoEntityRendererCompat<T extends LivingEntity & IAnimatab
      * Just add them yourself<br>
      * Remove in 1.20+
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated
     protected float getLerpedAge(T animatable, float partialTick) {
         return animatable.tickCount + partialTick;
     }
