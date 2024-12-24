@@ -22,6 +22,7 @@ public class MixinEntityUtil {
         if (entity instanceof EntityCustomModel && copied instanceof EntityNPCInterface) {
             EntityCustomModel modelEntity = (EntityCustomModel) entity;
             EntityNPCInterface npc = (EntityNPCInterface) copied;
+            npc.noCulling = true;
             IDataDisplay display = (IDataDisplay) npc.display;
             modelEntity.textureResLoc = NpcTextureUtils.getNpcTexture((EntityNPCInterface) copied);
             modelEntity.modelResLoc = new ResourceLocation(display.getCustomModelData().getModel());

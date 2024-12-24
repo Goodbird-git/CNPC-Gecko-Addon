@@ -56,7 +56,6 @@ minecraft {
                     source sourceSets.main
                 }
             }
-            args '--tweakClass', 'org.spongepowered.asm.launch.MixinTweaker', '--mixin', 'mixins.cnpcgeckoaddon.json'
         }
 
         data {
