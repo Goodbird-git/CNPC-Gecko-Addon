@@ -25,7 +25,6 @@ import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.util.RenderUtils;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 
 public class RenderCustomModel extends GeoEntityRenderer<EntityCustomModel> {
