@@ -36,6 +36,7 @@ public class EntityCustomModel extends Animal implements GeoAnimatable, GeoEntit
     public ItemStack leftHeldItem;
     public String headBoneName = "head";
     private EntityDimensions dims;
+    public int size = 5;
 
     private PlayState predicateMovement(AnimationState<EntityCustomModel> event) {
         if (manualAnim != null) {

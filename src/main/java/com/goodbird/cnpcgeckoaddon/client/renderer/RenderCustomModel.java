@@ -79,6 +79,7 @@ public class RenderCustomModel extends GeoEntityRenderer<EntityCustomModel> {
 
     @Override
     public void defaultRender(PoseStack poseStack, EntityCustomModel animatable, MultiBufferSource bufferSource, @org.jetbrains.annotations.Nullable RenderType renderType, @org.jetbrains.annotations.Nullable VertexConsumer buffer, float yaw, float partialTick, int packedLight) {
+        withScale((float) animatable.size /5f);
         BakedGeoModel bakedModel = getGeoModel().getBakedModel(getGeoModel().getModelResource(animatable));
         if (bakedModel.getBone("held_item").isPresent()) {
             GeoBone bone = bakedModel.getBone("held_item").get();

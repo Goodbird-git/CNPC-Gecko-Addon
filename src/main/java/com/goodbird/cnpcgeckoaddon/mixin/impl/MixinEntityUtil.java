@@ -31,6 +31,7 @@ public class MixinEntityUtil {
             modelEntity.walkAnim = display.getCustomModelData().getWalkAnim();
             modelEntity.attackAnim = display.getCustomModelData().getAttackAnim();
             modelEntity.hurtAnim = display.getCustomModelData().getHurtAnim();
+            modelEntity.size = npc.display.getSize();
             if(display.getCustomModelData().isHurtTintEnabled()){
                 modelEntity.hurtTime = npc.hurtTime;
                 modelEntity.deathTime = npc.deathTime;
