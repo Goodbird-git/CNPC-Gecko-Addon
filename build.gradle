@@ -101,7 +101,7 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.20.1-47.1.3'
-    implementation fg.deobf('lib:CustomNPCs:1.20.1-GBPort-Unofficial-20240709')
+    implementation fg.deobf('lib:CustomNPCs:1.20.1-GBPort-Unofficial-20250225')
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-1.20.1:4.4.6")
     implementation("com.eliotlash.mclib:mclib:20")
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
