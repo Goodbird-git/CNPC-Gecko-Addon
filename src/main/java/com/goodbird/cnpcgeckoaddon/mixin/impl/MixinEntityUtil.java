@@ -35,6 +35,9 @@ public class MixinEntityUtil {
             if(display.getCustomModelData().isHurtTintEnabled()){
                 modelEntity.hurtTime = npc.hurtTime;
                 modelEntity.deathTime = npc.deathTime;
+            } else {
+                modelEntity.hurtTime = 0;
+                modelEntity.deathTime = 0;
             }
             if(npc.inventory.getLeftHand()!=null) {
                 modelEntity.leftHeldItem = npc.inventory.getLeftHand().getMCItemStack();
