@@ -63,11 +63,11 @@ public abstract class MixinBlockScriptedWrapper extends BlockWrapper {
 
     @Unique
     public void syncAnimForPlayer(RawAnimation builder, IPlayer<ServerPlayer> player) {
-        NetworkWrapper.sendToPlayer(new PacketSyncTileAnimation(getMCTileEntity().getBlockPos(), builder), player.getMCEntity());
+        NetworkWrapper.send( player.getMCEntity(), new PacketSyncTileAnimation(getMCTileEntity().getBlockPos(), builder));
     }
 
     @Unique
     public void syncAnimForAll(RawAnimation builder) {
-        NetworkWrapper.sendToAll(new PacketSyncTileAnimation(getMCTileEntity().getBlockPos(), builder));
+        NetworkWrapper.sendAll(new PacketSyncTileAnimation(getMCTileEntity().getBlockPos(), builder));
     }
 }

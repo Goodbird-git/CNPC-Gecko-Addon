@@ -6,7 +6,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.network.NetworkEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.core.animation.RawAnimation;
@@ -67,7 +66,7 @@ public class PacketSyncAnimation {
         return new PacketSyncAnimation(id,builder);
     }
 
-    public static void handle(PacketSyncAnimation packet, Supplier<NetworkEvent.Context> ctx) {
+    public static void handle(PacketSyncAnimation packet) {
         Entity entity = Minecraft.getInstance().player.getCommandSenderWorld().getEntity(packet.id);
         if(!(entity instanceof EntityCustomNpc)) return;
         EntityCustomNpc npc = (EntityCustomNpc) entity;

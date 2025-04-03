@@ -1,19 +1,22 @@
 package com.goodbird.cnpcgeckoaddon;
 
 import com.goodbird.cnpcgeckoaddon.network.NetworkWrapper;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import com.goodbird.cnpcgeckoaddon.registry.EntityRegistry;
+import com.goodbird.cnpcgeckoaddon.registry.TileEntityRegistry;
+import net.fabricmc.api.ModInitializer;
 
-@Mod(CNPCGeckoAddon.MODID)
-public class CNPCGeckoAddon {
+public class CNPCGeckoAddon implements ModInitializer {
     public static final String MODID = "cnpcgeckoaddon";
 
     public CNPCGeckoAddon() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+
     }
 
-    private void setup(final FMLCommonSetupEvent event) {
+    @Override
+    public void onInitialize() {
+        EntityRegistry.registerEntities();
+        EntityRegistry.attribute();
+        TileEntityRegistry.registerBlocks();
         NetworkWrapper.init();
     }
 }

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "cnpcgeckoaddon",
+  "version": "1.0.0",
+
+  "name": "CNPC-Gecko-Addon",
+  "description": "Allows you to use geckolib models on your npcs",
+  "authors": [
+    "Goodbird"
+  ],
+  "contact": {
+
+  },
+
+  "license": "CC BY-NC",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.goodbird.cnpcgeckoaddon.CNPCGeckoAddon"
+    ],
+    "client": [
+      "com.goodbird.cnpcgeckoaddon.CNPCGeckoAddonClient"
+    ]
+  },
+  "mixins": [
+    "mixins.cnpcgeckoaddon.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.15.6",
+    "fabric-api": ">=0.92",
+    "minecraft": "=1.20.1"
+  }
+}

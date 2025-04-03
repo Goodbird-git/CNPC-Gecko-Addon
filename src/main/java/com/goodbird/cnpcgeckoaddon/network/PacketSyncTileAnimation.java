@@ -8,13 +8,11 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.network.NetworkEvent;
 import noppes.npcs.blocks.tiles.TileScripted;
 import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.core.animation.RawAnimation;
 
 import java.util.Map;
-import java.util.function.Supplier;
 
 public class PacketSyncTileAnimation {
     private BlockPos pos;
@@ -69,7 +67,7 @@ public class PacketSyncTileAnimation {
         return new PacketSyncTileAnimation(pos,builder);
     }
 
-    public static void handle(PacketSyncTileAnimation packet, Supplier<NetworkEvent.Context> ctx) {
+    public static void handle(PacketSyncTileAnimation packet) {
         BlockEntity entity = Minecraft.getInstance().player.getCommandSenderWorld().getBlockEntity(packet.pos);
         if(!(entity instanceof TileScripted)) return;
         TileScripted tile = (TileScripted) entity;
