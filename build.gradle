@@ -9,20 +9,20 @@ buildscript {
 plugins {
     id 'eclipse'
     id 'maven-publish'
-    id 'fabric-loom' version '1.3.8'
+    id 'fabric-loom' version '1.10-SNAPSHOT'
 }
 
 group = 'com.goodbird.cnpcgeckoaddon'
-version = '1.20.1-1.0.0'
+version = '1.21.1-1.0.0'
 
 java {
     archivesBaseName = 'CNPC-Gecko-Addon-Fabric'
-    toolchain.languageVersion = JavaLanguageVersion.of(17)
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
 }
 
 
 loom {
-    //accessWidenerPath = file("src/main/resources/customnpcs.accesswidener")
+    accessWidenerPath = file("src/main/resources/cnpcgeckoaddon.accesswidener")
     mixin.defaultRefmapName = "cnpcgeckoaddon.refmap.json"
     sourceSets.main.java.srcDirs += 'src/api/java'
     runs {
@@ -76,36 +76,19 @@ repositories {
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:1.20.1"
+    minecraft "com.mojang:minecraft:1.21.1"
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-1.20.1:2023.09.03@zip")
+        parchment("org.parchmentmc.data:parchment-1.21:2024.07.28@zip")
     }
-    modImplementation "net.fabricmc:fabric-loader:0.15.11"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:0.92.1+1.20.1"
+    modImplementation "net.fabricmc:fabric-loader:0.16.5"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.105.0+1.21.1"
 
-    modImplementation 'lib:CustomNPCs-1.20.1-GBPort-Unofficial-Fabric-20250328'
-    modImplementation "software.bernie.geckolib:geckolib-fabric-1.20.1:4.4.6"
+    modImplementation 'lib:CustomNPCs-1.21.1-GBPort-Unofficial-20250323'
+    modImplementation "software.bernie.geckolib:geckolib-fabric-1.21.1:4.7.5.1"
     modImplementation "com.eliotlash.mclib:mclib:20"
 }
 
-jar {
-    manifest {
-        attributes([
-                "Specification-Title"     : "CNPC-Gecko-Addon",
-                "Specification-Version"   : "1",
-                "Implementation-Title"    : project.name,
-                "Implementation-Version"  : project.jar.archiveVersion,
-                "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
-                "MixinConfigs": "mixins.cnpcgeckoaddon.json", // Конфигурации миксинов, через зяпятую если их несколько
-                "FMLCorePluginContainsFMLMod": "true",  // Не забываем указать эти два флага,
-                "ForceLoadAsMod": "true",               // чтобы Forge нормально загрузил и мод, и миксины
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
-    }
-}
-
-jar.finalizedBy('reobfJar')
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'

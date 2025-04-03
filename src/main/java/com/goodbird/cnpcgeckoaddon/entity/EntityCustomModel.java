@@ -1,6 +1,7 @@
 package com.goodbird.cnpcgeckoaddon.entity;
 
 import com.goodbird.cnpcgeckoaddon.CNPCGeckoAddon;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AgeableMob;
@@ -12,21 +13,17 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class EntityCustomModel extends Animal implements GeoAnimatable, GeoEntity {
     private AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
-    public ResourceLocation modelResLoc=new ResourceLocation(CNPCGeckoAddon.MODID, "geo/geo_npc.geo.json");
-    public ResourceLocation animResLoc=new ResourceLocation(CNPCGeckoAddon.MODID , "animations/geo_npc.animation.json");
-    public ResourceLocation textureResLoc = new ResourceLocation("customnpcs","textures/entity/humanmale/steve.png");
+    public ResourceLocation modelResLoc=ResourceLocation.fromNamespaceAndPath(CNPCGeckoAddon.MODID, "geo/geo_npc.geo.json");
+    public ResourceLocation animResLoc=ResourceLocation.fromNamespaceAndPath(CNPCGeckoAddon.MODID , "animations/geo_npc.animation.json");
+    public ResourceLocation textureResLoc = ResourceLocation.fromNamespaceAndPath("customnpcs","textures/entity/humanmale/steve.png");
     public String idleAnim = "";
     public String walkAnim = "";
     public String hurtAnim = "";
@@ -81,12 +78,17 @@ public class EntityCustomModel extends Animal implements GeoAnimatable, GeoEntit
         this.noCulling = true;
     }
 
+    @Override
+    public boolean isFood(ItemStack stack) {
+        return false;
+    }
+
     public void setSize(float width, float height) {
         dims = EntityDimensions.scalable(width, height);
     }
 
     @Override
-    public EntityDimensions getDimensions(Pose p_213305_1_) {
+    public EntityDimensions getDimensions(Pose pose) {
         if(dims==null){
             dims = EntityDimensions.scalable(0.7F, 2F);
         }
@@ -119,7 +121,7 @@ public class EntityCustomModel extends Animal implements GeoAnimatable, GeoEntit
         return null;
     }
 
-    public double getAttributeValue(Attribute p_233637_1_) {
+    public double getAttributeValue(Holder<Attribute> p_233637_1_) {
         try {
             return this.getAttributes().getValue(p_233637_1_);
         }catch (Exception e){

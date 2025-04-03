@@ -23,7 +23,7 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
-import software.bernie.geckolib.util.RenderUtils;
+import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.ArrayList;
 
@@ -39,7 +39,7 @@ public class RenderCustomModel extends GeoEntityRenderer<EntityCustomModel> {
     }
 
     protected void applyRotations(EntityCustomModel entityLiving, PoseStack matrixStackIn, float ageInTicks, float rotationYaw,
-                                  float partialTicks) {
+                                  float partialTicks, float nativeScale) {
         Pose pose = entityLiving.getPose();
         if (pose != Pose.SLEEPING) {
             matrixStackIn.mulPose(Axis.YP.rotationDegrees(180.0F - rotationYaw));
@@ -62,7 +62,7 @@ public class RenderCustomModel extends GeoEntityRenderer<EntityCustomModel> {
                     .mulPose(Axis.YP.rotationDegrees(((float) entityLiving.tickCount + partialTicks) * -75.0F));
         } else if (pose == Pose.SLEEPING) {
             Direction direction = entityLiving.getBedOrientation();
-            float f1 = direction != null ? RenderUtils.getDirectionAngle(direction) : rotationYaw;
+            float f1 = direction != null ? RenderUtil.getDirectionAngle(direction) : rotationYaw;
             matrixStackIn.mulPose(Axis.YP.rotationDegrees(f1));
             matrixStackIn.mulPose(Axis.ZP.rotationDegrees(this.getDeathMaxRotation(entityLiving)));
             matrixStackIn.mulPose(Axis.YP.rotationDegrees(270.0F));

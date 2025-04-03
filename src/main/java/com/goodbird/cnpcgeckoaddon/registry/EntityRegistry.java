@@ -26,7 +26,7 @@ public class EntityRegistry {
         builder.updateInterval(update);
         builder.sized(width, height);
         builder.clientTrackingRange(4);
-        ResourceLocation registryName = new ResourceLocation(CustomNpcs.MODID, name);
+        ResourceLocation registryName = ResourceLocation.fromNamespaceAndPath(CustomNpcs.MODID, name);
         EntityType<T> type = builder.build(registryName.toString());
         Registry.register(BuiltInRegistries.ENTITY_TYPE, registryName, type);
         return type;

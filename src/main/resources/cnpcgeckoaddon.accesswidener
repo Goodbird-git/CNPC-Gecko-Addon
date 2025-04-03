@@ -1,0 +1,3 @@
+accessWidener v1 named
+extendable method net/minecraft/world/entity/LivingEntity getDimensions (Lnet/minecraft/world/entity/Pose;)Lnet/minecraft/world/entity/EntityDimensions;
+accessible method net/minecraft/world/level/block/entity/BlockEntity loadAdditional (Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/core/HolderLookup$Provider;)V

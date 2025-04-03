@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinRenderNPCInterface <T extends EntityNPCInterface, M extends EntityModel<T>> extends LivingEntityRenderer<T, M> {
 
     @Shadow(remap = false)
-    public abstract void renderNameTag(T npc, Component text, PoseStack matrixStack, MultiBufferSource buffer, int light);
+    public abstract void renderNameTag(T entity, Component displayName, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, float partialTick);
 
     public MixinRenderNPCInterface() {
         super(null,null,0);
@@ -43,7 +43,7 @@ public abstract class MixinRenderNPCInterface <T extends EntityNPCInterface, M e
     @Unique
     public void cnpcgeckoaddon$drawNameStandalone(T p_225623_1_, float p_225623_2_, float p_225623_3_, PoseStack p_225623_4_, MultiBufferSource p_225623_5_, int p_225623_6_){
         if (this.shouldShowName(p_225623_1_)) {
-            this.renderNameTag(p_225623_1_, p_225623_1_.getDisplayName(), p_225623_4_, p_225623_5_, p_225623_6_);
+            this.renderNameTag(p_225623_1_, p_225623_1_.getDisplayName(), p_225623_4_, p_225623_5_, p_225623_6_, p_225623_2_);
         }
     }
 

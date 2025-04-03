@@ -7,14 +7,15 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import noppes.npcs.blocks.tiles.TileScripted;
-import software.bernie.geckolib.core.animation.Animation;
-import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.animation.Animation;
+import software.bernie.geckolib.animation.RawAnimation;
 
 import java.util.Map;
 
-public class PacketSyncTileAnimation {
+public class PacketSyncTileAnimation implements CustomPacketPayload {
     private BlockPos pos;
     private RawAnimation builder;
 
@@ -76,6 +77,11 @@ public class PacketSyncTileAnimation {
         }
         TileEntityCustomModel geckoTile = (TileEntityCustomModel) tile.renderTile;
         geckoTile.manualAnim = packet.builder;
+    }
+
+    @Override
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return CustomPacketPayload.createType("cnpcgeckoaddon"+getClass().getSimpleName().toLowerCase());
     }
 }
 

@@ -68,7 +68,7 @@ public class GuiModelAnimation extends GuiNPCInterface implements ITextfieldList
     }
 
     public boolean isValidAnimFile(String name){
-        return GeckoLibCache.getBakedAnimations().containsKey(new ResourceLocation(name));
+        return GeckoLibCache.getBakedAnimations().containsKey(ResourceLocation.parse(name));
     }
 
     public boolean isValidAnimation(String name){

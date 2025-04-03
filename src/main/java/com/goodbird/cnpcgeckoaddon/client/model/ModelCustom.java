@@ -3,10 +3,10 @@ package com.goodbird.cnpcgeckoaddon.client.model;
 import com.goodbird.cnpcgeckoaddon.entity.EntityCustomModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.GeckoLibCache;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
-import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 
@@ -15,7 +15,7 @@ public class ModelCustom extends GeoModel<EntityCustomModel> {
     @Override
     public ResourceLocation getAnimationResource(EntityCustomModel animatable) {
         if(!GeckoLibCache.getBakedAnimations().containsKey(animatable.animResLoc)){
-            return new ResourceLocation("cnpcgeckoaddon","animations/none.animations.json");
+            return ResourceLocation.fromNamespaceAndPath("cnpcgeckoaddon","animations/none.animations.json");
         }
         return animatable.animResLoc;
     }
@@ -23,10 +23,10 @@ public class ModelCustom extends GeoModel<EntityCustomModel> {
     @Override
     public ResourceLocation getModelResource(EntityCustomModel animatable) {
         if(!GeckoLibCache.getBakedModels().containsKey(animatable.modelResLoc)){
-            return new ResourceLocation("cnpcgeckoaddon","geo/modelnotfound.geo.json");
+            return ResourceLocation.fromNamespaceAndPath("cnpcgeckoaddon","geo/modelnotfound.geo.json");
         }
         if(!GeckoLibCache.getBakedAnimations().containsKey(animatable.animResLoc)){
-            return new ResourceLocation("cnpcgeckoaddon","geo/animfilenotfound.geo.json");
+            return ResourceLocation.fromNamespaceAndPath("cnpcgeckoaddon","geo/animfilenotfound.geo.json");
         }
         return animatable.modelResLoc;
     }
@@ -34,10 +34,10 @@ public class ModelCustom extends GeoModel<EntityCustomModel> {
     @Override
     public ResourceLocation getTextureResource(EntityCustomModel animatable) {
         if(!GeckoLibCache.getBakedModels().containsKey(animatable.modelResLoc)){
-            return new ResourceLocation("cnpcgeckoaddon","textures/model/alphabet.png");
+            return ResourceLocation.fromNamespaceAndPath("cnpcgeckoaddon","textures/model/alphabet.png");
         }
         if(!GeckoLibCache.getBakedAnimations().containsKey(animatable.animResLoc)){
-            return new ResourceLocation("cnpcgeckoaddon","textures/model/alphabet.png");
+            return ResourceLocation.fromNamespaceAndPath("cnpcgeckoaddon","textures/model/alphabet.png");
         }
         return animatable.textureResLoc;
     }
@@ -45,7 +45,7 @@ public class ModelCustom extends GeoModel<EntityCustomModel> {
     @Override
     public void setCustomAnimations(EntityCustomModel animatable, long instanceId, AnimationState<EntityCustomModel> animationState) {
         super.setCustomAnimations(animatable, instanceId, animationState);
-        CoreGeoBone head = getAnimationProcessor().getBone(animatable.headBoneName);
+        GeoBone head = getAnimationProcessor().getBone(animatable.headBoneName);
 
         if (head != null) {
             EntityModelData entityData = animationState.getData(DataTickets.ENTITY_MODEL_DATA);

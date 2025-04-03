@@ -11,7 +11,7 @@ import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.packets.Packets;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.animation.RawAnimation;
 
 @Mixin(NPCWrapper.class)
 public class MixinNpcWrapper<T extends EntityNPCInterface> extends EntityLivingWrapper<T> {

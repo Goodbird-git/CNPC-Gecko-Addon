@@ -26,10 +26,11 @@
   "mixins": [
     "mixins.cnpcgeckoaddon.json"
   ],
+  "accessWidener": "cnpcgeckoaddon.accesswidener",
 
   "depends": {
     "fabricloader": ">=0.15.6",
-    "fabric-api": ">=0.92",
-    "minecraft": "=1.20.1"
+    "fabric-api": ">=0.91",
+    "minecraft": ">=1.21"
   }
 }
