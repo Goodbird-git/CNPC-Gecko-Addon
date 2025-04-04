@@ -45,9 +45,6 @@ public class RenderCustomModel extends GeoEntityRenderer<EntityCustomModel> {
             matrixStackIn.mulPose(Axis.YP.rotationDegrees(180.0F - rotationYaw));
         }
 
-        if (isShaking(animatable))
-            rotationYaw += (float)(Math.cos(animatable.tickCount * 3.25d) * Math.PI * 0.4d);
-
         if (entityLiving.deathTime > 0) {
             float f = ((float) entityLiving.deathTime + partialTicks - 1.0F) / 20.0F * 1.6F;
             f = Mth.sqrt(f);
