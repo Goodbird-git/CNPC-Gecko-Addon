@@ -14,7 +14,7 @@ import noppes.npcs.api.wrapper.BlockWrapper;
 import noppes.npcs.blocks.tiles.TileScripted;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.animation.RawAnimation;
 
 @Mixin(BlockScriptedWrapper.class)
 public abstract class MixinBlockScriptedWrapper extends BlockWrapper {
@@ -36,21 +36,21 @@ public abstract class MixinBlockScriptedWrapper extends BlockWrapper {
     @Unique
     public void setGeckoModel(String model) {
         TileEntityCustomModel geckoTile = getOrCreateTECM();
-        geckoTile.modelResLoc = new ResourceLocation(model);
+        geckoTile.modelResLoc = ResourceLocation.parse(model);
         ((TileScripted) getMCTileEntity()).needsClientUpdate = true;
     }
 
     @Unique
     public void setGeckoTexture(String texture) {
         TileEntityCustomModel geckoTile = getOrCreateTECM();
-        geckoTile.textureResLoc = new ResourceLocation(texture);
+        geckoTile.textureResLoc = ResourceLocation.parse(texture);
         ((TileScripted) getMCTileEntity()).needsClientUpdate = true;
     }
 
     @Unique
     public void setGeckoAnimationFile(String animation) {
         TileEntityCustomModel geckoTile = getOrCreateTECM();
-        geckoTile.animResLoc = new ResourceLocation(animation);
+        geckoTile.animResLoc = ResourceLocation.parse(animation);
         ((TileScripted) getMCTileEntity()).needsClientUpdate = true;
     }
 
@@ -63,11 +63,11 @@ public abstract class MixinBlockScriptedWrapper extends BlockWrapper {
 
     @Unique
     public void syncAnimForPlayer(RawAnimation builder, IPlayer<ServerPlayer> player) {
-        NetworkWrapper.sendToPlayer(new PacketSyncTileAnimation(getMCTileEntity().getBlockPos(), builder), player.getMCEntity());
+        NetworkWrapper.send(player.getMCEntity(), new PacketSyncTileAnimation(getMCTileEntity().getBlockPos(), builder));
     }
 
     @Unique
     public void syncAnimForAll(RawAnimation builder) {
-        NetworkWrapper.sendToAll(new PacketSyncTileAnimation(getMCTileEntity().getBlockPos(), builder));
+        NetworkWrapper.sendAll(new PacketSyncTileAnimation(getMCTileEntity().getBlockPos(), builder));
     }
 }

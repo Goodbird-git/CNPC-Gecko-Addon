@@ -11,7 +11,7 @@ public class TileModelCustom extends GeoModel<TileEntityCustomModel> {
     @Override
     public ResourceLocation getAnimationResource(TileEntityCustomModel animatable) {
         if(!GeckoLibCache.getBakedAnimations().containsKey(animatable.animResLoc)){
-            return new ResourceLocation("cnpcgeckoaddon","animations/none.animations.json");
+            return ResourceLocation.fromNamespaceAndPath("cnpcgeckoaddon","animations/none.animations.json");
         }
         return animatable.animResLoc;
     }
@@ -19,10 +19,10 @@ public class TileModelCustom extends GeoModel<TileEntityCustomModel> {
     @Override
     public ResourceLocation getModelResource(TileEntityCustomModel animatable) {
         if(!GeckoLibCache.getBakedModels().containsKey(animatable.modelResLoc)){
-            return new ResourceLocation("cnpcgeckoaddon","geo/modelnotfound.geo.json");
+            return ResourceLocation.fromNamespaceAndPath("cnpcgeckoaddon","geo/modelnotfound.geo.json");
         }
         if(!GeckoLibCache.getBakedAnimations().containsKey(animatable.animResLoc)){
-            return new ResourceLocation("cnpcgeckoaddon","geo/animfilenotfound.geo.json");
+            return ResourceLocation.fromNamespaceAndPath("cnpcgeckoaddon","geo/animfilenotfound.geo.json");
         }
         return animatable.modelResLoc;
     }
@@ -30,10 +30,10 @@ public class TileModelCustom extends GeoModel<TileEntityCustomModel> {
     @Override
     public ResourceLocation getTextureResource(TileEntityCustomModel animatable) {
         if(!GeckoLibCache.getBakedModels().containsKey(animatable.modelResLoc)){
-            return new ResourceLocation("cnpcgeckoaddon","textures/model/alphabet.png");
+            return ResourceLocation.fromNamespaceAndPath("cnpcgeckoaddon","textures/model/alphabet.png");
         }
         if(!GeckoLibCache.getBakedAnimations().containsKey(animatable.animResLoc)){
-            return new ResourceLocation("cnpcgeckoaddon","textures/model/alphabet.png");
+            return ResourceLocation.fromNamespaceAndPath("cnpcgeckoaddon","textures/model/alphabet.png");
         }
         return animatable.textureResLoc;
     }

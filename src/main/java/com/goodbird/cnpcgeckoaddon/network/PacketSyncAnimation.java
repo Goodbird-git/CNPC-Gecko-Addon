@@ -5,16 +5,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.network.NetworkEvent;
 import noppes.npcs.entity.EntityCustomNpc;
-import software.bernie.geckolib.core.animation.Animation;
-import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.animation.Animation;
+import software.bernie.geckolib.animation.RawAnimation;
 
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class PacketSyncAnimation {
+public class PacketSyncAnimation implements CustomPacketPayload {
     private int id;
     private RawAnimation builder;
 
@@ -67,13 +67,18 @@ public class PacketSyncAnimation {
         return new PacketSyncAnimation(id,builder);
     }
 
-    public static void handle(PacketSyncAnimation packet, Supplier<NetworkEvent.Context> ctx) {
+    public static void handle(PacketSyncAnimation packet) {
         Entity entity = Minecraft.getInstance().player.getCommandSenderWorld().getEntity(packet.id);
         if(!(entity instanceof EntityCustomNpc)) return;
         EntityCustomNpc npc = (EntityCustomNpc) entity;
         if(npc.modelData==null || !(npc.modelData.getEntity(npc) instanceof EntityCustomModel)) return;
         EntityCustomModel entityCustomModel = (EntityCustomModel) npc.modelData.getEntity(npc);
         entityCustomModel.manualAnim = packet.builder;
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return CustomPacketPayload.createType("cnpcgeckoaddon"+getClass().getSimpleName().toLowerCase());
     }
 }
 
