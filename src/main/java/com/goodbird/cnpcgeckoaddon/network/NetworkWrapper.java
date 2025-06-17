@@ -29,14 +29,14 @@ public class NetworkWrapper {
     }
 
     public static <MSG extends CustomPacketPayload> void registerPacket(Class<MSG> messageType, BiConsumer<MSG, FriendlyByteBuf> encoder, Function<FriendlyByteBuf, MSG> decoder, TriConsumer<MSG, MinecraftServer, ServerPlayer> handle) {
-        PayloadTypeRegistry.playC2S().register(CustomPacketPayload.createType("customnpcs"+messageType.getSimpleName().toLowerCase()), CustomPacketPayload.codec(encoder::accept, decoder::apply));
-        ServerPlayNetworking.registerGlobalReceiver(CustomPacketPayload.<MSG>createType("customnpcs"+messageType.getSimpleName().toLowerCase()), (packet, context) -> handle.accept(packet, context.player().server, context.player()));
+        PayloadTypeRegistry.playC2S().register(CustomPacketPayload.createType("cnpcgeckoaddon"+messageType.getSimpleName().toLowerCase()), CustomPacketPayload.codec(encoder::accept, decoder::apply));
+        ServerPlayNetworking.registerGlobalReceiver(CustomPacketPayload.<MSG>createType("cnpcgeckoaddon"+messageType.getSimpleName().toLowerCase()), (packet, context) -> handle.accept(packet, context.player().server, context.player()));
     }
 
     public static <MSG extends CustomPacketPayload> void registerPacket(Class<MSG> messageType, BiConsumer<MSG, FriendlyByteBuf> encoder, Function<FriendlyByteBuf, MSG> decoder, Consumer<MSG> handle) {
-        PayloadTypeRegistry.playS2C().register(CustomPacketPayload.createType("customnpcs"+messageType.getSimpleName().toLowerCase()), CustomPacketPayload.codec(encoder::accept, decoder::apply));
+        PayloadTypeRegistry.playS2C().register(CustomPacketPayload.createType("cnpcgeckoaddon"+messageType.getSimpleName().toLowerCase()), CustomPacketPayload.codec(encoder::accept, decoder::apply));
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            ClientPlayNetworking.registerGlobalReceiver(CustomPacketPayload.<MSG>createType("customnpcs"+messageType.getSimpleName().toLowerCase()), (packet, context) -> handle.accept(packet));
+            ClientPlayNetworking.registerGlobalReceiver(CustomPacketPayload.<MSG>createType("cnpcgeckoaddon"+messageType.getSimpleName().toLowerCase()), (packet, context) -> handle.accept(packet));
         }
     }
 
