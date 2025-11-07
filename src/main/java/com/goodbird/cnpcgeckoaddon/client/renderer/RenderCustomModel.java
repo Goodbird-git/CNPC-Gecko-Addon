@@ -38,44 +38,6 @@ public class RenderCustomModel extends GeoEntityRenderer<EntityCustomModel> {
         return RenderType.entityTranslucent(getTextureLocation(animatable));
     }
 
-    protected void applyRotations(EntityCustomModel entityLiving, PoseStack matrixStackIn, float ageInTicks, float rotationYaw,
-                                  float partialTicks, float nativeScale) {
-        Pose pose = entityLiving.getPose();
-        if (pose != Pose.SLEEPING) {
-            matrixStackIn.mulPose(Axis.YP.rotationDegrees(180.0F - rotationYaw));
-        }
-
-        if (isShaking(animatable))
-            rotationYaw += (float)(Math.cos(animatable.tickCount * 3.25d) * Math.PI * 0.4d);
-
-        if (entityLiving.deathTime > 0) {
-            float f = ((float) entityLiving.deathTime + partialTicks - 1.0F) / 20.0F * 1.6F;
-            f = Mth.sqrt(f);
-            if (f > 1.0F) {
-                f = 1.0F;
-            }
-
-            matrixStackIn.mulPose(Axis.ZP.rotationDegrees(f * this.getDeathMaxRotation(entityLiving)));
-        } else if (entityLiving.isAutoSpinAttack()) {
-            matrixStackIn.mulPose(Axis.XP.rotationDegrees(-90.0F - entityLiving.getXRot()));
-            matrixStackIn
-                    .mulPose(Axis.YP.rotationDegrees(((float) entityLiving.tickCount + partialTicks) * -75.0F));
-        } else if (pose == Pose.SLEEPING) {
-            Direction direction = entityLiving.getBedOrientation();
-            float f1 = direction != null ? RenderUtil.getDirectionAngle(direction) : rotationYaw;
-            matrixStackIn.mulPose(Axis.YP.rotationDegrees(f1));
-            matrixStackIn.mulPose(Axis.ZP.rotationDegrees(this.getDeathMaxRotation(entityLiving)));
-            matrixStackIn.mulPose(Axis.YP.rotationDegrees(270.0F));
-        } else if (entityLiving.hasCustomName()) {
-            String s = ChatFormatting.stripFormatting(entityLiving.getName().getString());
-            if ("Dinnerbone".equals(s) || "Grumm".equals(s)) {
-                matrixStackIn.translate(0.0D, entityLiving.getBbHeight() + 0.1F, 0.0D);
-                matrixStackIn.mulPose(Axis.ZP.rotationDegrees(180.0F));
-            }
-        }
-
-    }
-
     @Override
     public void defaultRender(PoseStack poseStack, EntityCustomModel animatable, MultiBufferSource bufferSource, @org.jetbrains.annotations.Nullable RenderType renderType, @org.jetbrains.annotations.Nullable VertexConsumer buffer, float yaw, float partialTick, int packedLight) {
         BakedGeoModel bakedModel = getGeoModel().getBakedModel(getGeoModel().getModelResource(animatable));
