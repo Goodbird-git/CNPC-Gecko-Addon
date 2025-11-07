@@ -7,15 +7,18 @@
   "mixins": [
     "MixinBlockScriptedWrapper",
     "MixinDataDisplay",
+    "MixinDialog",
     "MixinEntityCustomNpc",
     "MixinEntityUtil",
     "MixinNpcWrapper",
+    "MixinPacketDialog",
     "MixinWrapperNpcApi",
     "TileScriptedMixin"
   ],
   "client": [
     "MixinBlockScriptedRenderer",
     "MixinGuiCreationEntities",
+    "MixinGuiDialogEdit",
     "MixinRenderNPCInterface"
   ],
   "server": []
