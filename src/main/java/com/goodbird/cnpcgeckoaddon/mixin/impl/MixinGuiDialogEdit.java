@@ -27,8 +27,9 @@ public class MixinGuiDialogEdit extends GuiBasic {
 
     @Inject(method = "init", at = @At("TAIL"))
     public void init(CallbackInfo ci){
-        addButton(new GuiButtonNop(this, 77, guiLeft + 214, guiTop + 114, 144, 20, "dialog.selectanimation"));
-        addButton(new GuiButtonNop(this, 78, guiLeft + 360, guiTop + 114, 20, 20, "X"));
+        addButton(new GuiButtonNop(this, 77, guiLeft + 214, guiTop + 114, 84, 20, "dialog.selectanimation"));
+        addButton(new GuiButtonNop(this, 78, guiLeft + 300, guiTop + 114, 58, 20, new String[]{"looptype.once","looptype.loop"}, ((IDialog)dialog).getLoopType()));
+        addButton(new GuiButtonNop(this, 79, guiLeft + 360, guiTop + 114, 20, 20, "X"));
         if(((IDialog)dialog).hasAnimation()) {
             getButton(77).setDisplayText(((IDialog)dialog).getAnimation());
         }
@@ -48,6 +49,10 @@ public class MixinGuiDialogEdit extends GuiBasic {
                     (name)-> ((IDialog)dialog).setAnimation(name)));
         }
         if(id == 78){
+            ((IDialog)dialog).setLoopType(guibutton.getValue());
+            init();
+        }
+        if(id == 79){
             ((IDialog)dialog).setAnimation("");
             init();
         }

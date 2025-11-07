@@ -1,4 +1,6 @@
 {
   "entity.cnpcgeckoaddon.custommodelentity": "Geckolib Model",
-  "dialog.selectanimation": "Select Animation"
+  "dialog.selectanimation": "Select Animation",
+  "looptype.once": "Once",
+  "looptype.loop": "Loop"
 }
