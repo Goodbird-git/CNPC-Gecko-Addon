@@ -5,6 +5,7 @@ import com.goodbird.cnpcgeckoaddon.client.gui.GuiStringSelection;
 import com.goodbird.cnpcgeckoaddon.client.gui.SubGuiModelExtras;
 import com.goodbird.cnpcgeckoaddon.entity.EntityCustomModel;
 import com.goodbird.cnpcgeckoaddon.mixin.IDataDisplay;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -40,6 +41,13 @@ public class MixinGuiCreationEntities extends GuiCreationScreenInterface {
             this.addButton(new GuiButtonNop(this, 202, this.guiLeft + 160, this.guiTop + 20, 150, 20, customModel.modelResLoc.getPath(), (b) -> {
                 setSubGui(new GuiStringSelection(this, "Selecting geckolib model:", list, name -> {
                     ((IDataDisplay)npc.display).getCustomModelData().setModel(name);
+                    String[] nameParts = name.split(":");
+                    String[] modelFileParts = nameParts[1].split("/");
+                    String modelFile = modelFileParts[modelFileParts.length-1];
+                    String modelName = modelFile.split("\\.")[0];
+                    String textureName = nameParts[0]+":textures/entity/model/"+modelName+".png";
+                    if(!Minecraft.getInstance().getResourceManager().getResourceStack(ResourceLocation.parse(textureName)).isEmpty())
+                        npc.display.setSkinTexture(textureName);
                     getButton(202).setDisplayText(name);
                 }));
             }));
