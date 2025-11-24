@@ -55,6 +55,7 @@ public class RenderCustomModel extends GeoEntityRenderer<EntityCustomModel> {
                 this.renderItem(bone, animatable, animatable.leftHeldItem, poseStack, bufferSource, packedLight);
             }
         }
+        animatable.tickCount=(int)(System.currentTimeMillis()/50);
         super.defaultRender(poseStack, animatable, bufferSource, renderType, buffer, yaw, partialTick, packedLight);
     }
 
