@@ -3,6 +3,7 @@ package com.goodbird.cnpcgeckoaddon.mixin.impl;
 import com.goodbird.cnpcgeckoaddon.mixin.IDialog;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
 import noppes.npcs.controllers.data.Dialog;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -69,5 +70,11 @@ public class MixinDialog implements IDialog {
         }else{
             loopType=0;
         }
+    }
+
+    @Inject(method = "copy", at = @At("RETURN"))
+    public void copy(Player player, CallbackInfoReturnable<Dialog> cir){
+        ((IDialog)cir.getReturnValue()).setAnimation(animationName);
+        ((IDialog)cir.getReturnValue()).setLoopType(loopType);
     }
 }
