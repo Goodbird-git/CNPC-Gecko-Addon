@@ -8,6 +8,7 @@
     "MixinDataDisplay",
     "MixinEntityCustomNpc",
     "MixinEntityUtil",
+    "MixinModelData",
     "MixinNpcWrapper",
     "MixinWrapperNpcApi",
     "TileScriptedMixin"
