@@ -1,6 +1,7 @@
 package com.goodbird.cnpcgeckoaddon.entity;
 
 import com.goodbird.cnpcgeckoaddon.CNPCGeckoAddon;
+import com.goodbird.cnpcgeckoaddon.mixin.impl.AnimControllerAccessor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AgeableMob;
@@ -33,6 +34,7 @@ public class EntityCustomModel extends Animal implements GeoAnimatable, GeoEntit
     public String attackAnim = "";
     public RawAnimation dialogAnim = null;
     public RawAnimation manualAnim = null;
+    public boolean manualAnimInstant = false;
     public ItemStack leftHeldItem;
     public String headBoneName = "head";
     private EntityDimensions dims;
@@ -47,6 +49,10 @@ public class EntityCustomModel extends Animal implements GeoAnimatable, GeoEntit
                     event.getController().forceAnimationReset();
                 }
                 event.getController().setAnimation(manualAnim);
+                if(((AnimControllerAccessor)event.getController()).getAnimationState()==AnimationController.State.TRANSITIONING &&
+                        !((AnimControllerAccessor) event.getController()).getJustStartedTransition() && manualAnimInstant) {
+                    ((AnimControllerAccessor) event.getController()).setAnimationState(AnimationController.State.RUNNING);
+                }
                 return PlayState.CONTINUE;
             }
         }

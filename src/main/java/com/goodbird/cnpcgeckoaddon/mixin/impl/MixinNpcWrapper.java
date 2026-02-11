@@ -62,4 +62,13 @@ public class MixinNpcWrapper<T extends EntityNPCInterface> extends EntityLivingW
     public void syncAnimationsForAll(RawAnimation builder) {
         NetworkWrapper.sendToAll(new PacketSyncAnimation(entity.getId(),builder));
     }
+
+    @Unique
+    public void syncInstantAnimationsFor(IPlayer player, RawAnimation builder) {
+        NetworkWrapper.sendToPlayer(new PacketSyncAnimation(entity.getId(),builder, true), player.getMCEntity());
+    }
+    @Unique
+    public void syncInstantAnimationsForAll(RawAnimation builder) {
+        NetworkWrapper.sendToAll(new PacketSyncAnimation(entity.getId(),builder, true));
+    }
 }

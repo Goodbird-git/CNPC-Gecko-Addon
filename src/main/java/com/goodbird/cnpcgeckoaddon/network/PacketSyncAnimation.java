@@ -17,10 +17,17 @@ import java.util.function.Supplier;
 public class PacketSyncAnimation {
     private int id;
     private RawAnimation builder;
+    private boolean instant = false;
 
     public PacketSyncAnimation(int entityId, RawAnimation builder) {
         this.id = entityId;
         this.builder = builder;
+    }
+
+    public PacketSyncAnimation(int entityId, RawAnimation builder, boolean instant) {
+        this.id = entityId;
+        this.builder = builder;
+        this.instant = instant;
     }
 
     public PacketSyncAnimation(){
@@ -29,6 +36,7 @@ public class PacketSyncAnimation {
 
     public void encode(FriendlyByteBuf buf) {
         buf.writeInt(id);
+        buf.writeBoolean(instant);
 
         CompoundTag compound = new CompoundTag();
         ListTag animList = new ListTag();
@@ -57,6 +65,7 @@ public class PacketSyncAnimation {
 
     public static PacketSyncAnimation decode(FriendlyByteBuf buf) {
         int id = buf.readInt();
+        boolean instant = buf.readBoolean();
         RawAnimation builder = RawAnimation.begin();
         CompoundTag compound = buf.readNbt();
         ListTag animList = compound.getList("anims",10);
@@ -64,7 +73,7 @@ public class PacketSyncAnimation {
             CompoundTag animTag = (CompoundTag) animList.get(i);
             builder.then(animTag.getString("name"), Animation.LoopType.fromString(animTag.getString("loop")));
         }
-        return new PacketSyncAnimation(id,builder);
+        return new PacketSyncAnimation(id,builder, instant);
     }
 
     public static void handle(PacketSyncAnimation packet, Supplier<NetworkEvent.Context> ctx) {
@@ -74,6 +83,7 @@ public class PacketSyncAnimation {
         if(npc.modelData==null || !(npc.modelData.getEntity(npc) instanceof EntityCustomModel)) return;
         EntityCustomModel entityCustomModel = (EntityCustomModel) npc.modelData.getEntity(npc);
         entityCustomModel.manualAnim = packet.builder;
+        entityCustomModel.manualAnimInstant = packet.instant;
     }
 }
 
