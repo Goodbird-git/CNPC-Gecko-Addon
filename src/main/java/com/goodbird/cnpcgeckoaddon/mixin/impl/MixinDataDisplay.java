@@ -3,10 +3,13 @@ package com.goodbird.cnpcgeckoaddon.mixin.impl;
 import com.goodbird.cnpcgeckoaddon.data.CustomModelData;
 import com.goodbird.cnpcgeckoaddon.entity.EntityCustomModel;
 import com.goodbird.cnpcgeckoaddon.mixin.IDataDisplay;
+import com.goodbird.cnpcgeckoaddon.network.NetworkWrapper;
+import com.goodbird.cnpcgeckoaddon.network.PacketSyncTexture;
 import net.minecraft.nbt.CompoundTag;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.entity.data.DataDisplay;
+import noppes.npcs.shared.client.util.NoppesStringUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -20,6 +23,10 @@ public class MixinDataDisplay implements IDataDisplay {
 
     @Shadow(remap = false)
     EntityNPCInterface npc;
+    @Shadow
+    private String texture;
+    @Shadow
+    public byte skinType;
     @Unique
     private final CustomModelData customNPC_Gecko_Addon$customModelData = new CustomModelData();
 
@@ -37,6 +44,16 @@ public class MixinDataDisplay implements IDataDisplay {
     @Unique
     public CustomModelData getCustomModelData(){
         return customNPC_Gecko_Addon$customModelData;
+    }
+
+    @Unique
+    public void setSkinTextureSeamless(String texture){
+        if(texture == null || this.texture.equals(texture))
+            return;
+        this.texture = NoppesStringUtils.cleanResource(texture);
+        npc.textureLocation = null;
+        skinType = 0;
+        NetworkWrapper.sendToAll(new PacketSyncTexture(npc.getId(), texture));
     }
 
     @Unique
