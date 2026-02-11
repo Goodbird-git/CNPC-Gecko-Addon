@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 
 public class RenderCustomModel extends GeoEntityRenderer<EntityCustomModel> {
+    boolean tickManually;
 
     public RenderCustomModel(EntityRendererProvider.Context renderManager) {
         super(renderManager, new ModelCustom());
@@ -94,6 +95,12 @@ public class RenderCustomModel extends GeoEntityRenderer<EntityCustomModel> {
             if(animatable.leftHeldItem!=null && !animatable.leftHeldItem.isEmpty()) {
                 this.renderItem(bone, animatable, animatable.leftHeldItem, poseStack, bufferSource, packedLight);
             }
+        }
+        if(animatable.owner!=null && animatable.owner.level().getEntity(animatable.owner.getId())==null){
+            tickManually = true;
+        }
+        if(tickManually){
+            animatable.tickCount=(int)(System.currentTimeMillis()/50);
         }
         super.defaultRender(poseStack, animatable, bufferSource, renderType, buffer, yaw, partialTick, packedLight);
     }

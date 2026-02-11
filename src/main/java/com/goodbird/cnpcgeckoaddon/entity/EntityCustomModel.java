@@ -12,6 +12,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import noppes.npcs.entity.EntityNPCInterface;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -39,6 +40,7 @@ public class EntityCustomModel extends Animal implements GeoAnimatable, GeoEntit
     public String headBoneName = "head";
     private EntityDimensions dims;
     public int size = 5;
+    public EntityNPCInterface owner;
 
     private PlayState predicateMovement(AnimationState<EntityCustomModel> event) {
         if (manualAnim != null) {
