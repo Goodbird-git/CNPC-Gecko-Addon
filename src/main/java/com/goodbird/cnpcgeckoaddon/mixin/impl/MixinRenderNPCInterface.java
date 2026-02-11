@@ -34,7 +34,7 @@ public abstract class MixinRenderNPCInterface <T extends EntityNPCInterface, M e
     @Inject(method = "render(Lnoppes/npcs/entity/EntityNPCInterface;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",at=@At(value = "INVOKE",target = "Lnet/minecraft/client/renderer/entity/LivingEntityRenderer;render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"), cancellable = true)
     public void render(T npc, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight, CallbackInfo ci) {
         if(npc instanceof EntityCustomNpc && ((EntityCustomNpc)npc).modelData.getEntity(npc) instanceof EntityCustomModel){
-            cnpcgeckoaddon$renderGeoModel((EntityCustomNpc) npc,matrixStack,buffer,packedLight);
+            cnpcgeckoaddon$renderGeoModel((EntityCustomNpc) npc,matrixStack,buffer,packedLight, partialTicks);
             cnpcgeckoaddon$drawNameStandalone(npc, entityYaw, partialTicks, matrixStack, buffer, packedLight);
             ci.cancel();
         }
@@ -51,7 +51,7 @@ public abstract class MixinRenderNPCInterface <T extends EntityNPCInterface, M e
 
 
     @Unique
-    private void cnpcgeckoaddon$renderGeoModel(EntityCustomNpc npc, PoseStack matrixStack, MultiBufferSource buffer, int packedLight)
+    private void cnpcgeckoaddon$renderGeoModel(EntityCustomNpc npc, PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks)
     {
         Entity entity = npc.modelData.getEntity(npc);
         //entity.setYRot(entity.yRotO = 0);
@@ -61,7 +61,7 @@ public abstract class MixinRenderNPCInterface <T extends EntityNPCInterface, M e
             EntityRenderDispatcher lvt_16_1_ = Minecraft.getInstance().getEntityRenderDispatcher();
             lvt_16_1_.setRenderShadow(false);
             RenderSystem.runAsFancy(() -> {
-                lvt_16_1_.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack, buffer,packedLight);
+                lvt_16_1_.render(entity, 0.0, 0.0, 0.0, 0.0F, partialTicks, matrixStack, buffer,packedLight);
             });
         }
         else if (!npc.isInvisibleTo(Minecraft.getInstance().player))
@@ -73,7 +73,7 @@ public abstract class MixinRenderNPCInterface <T extends EntityNPCInterface, M e
             EntityRenderDispatcher lvt_16_1_ = Minecraft.getInstance().getEntityRenderDispatcher();
             lvt_16_1_.setRenderShadow(false);
             RenderSystem.runAsFancy(() -> {
-                lvt_16_1_.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack, buffer,packedLight);
+                lvt_16_1_.render(entity, 0.0, 0.0, 0.0, 0.0F, partialTicks, matrixStack, buffer,packedLight);
             });
             RenderSystem.disableBlend();
             RenderSystem.depthMask(true);
