@@ -37,6 +37,7 @@ public abstract class MixinRenderNPCInterface <T extends EntityNPCInterface, M e
             modelEntity.owner = npc;
             cnpcgeckoaddon$renderGeoModel((EntityCustomNpc) npc,matrixStack,buffer,packedLight, partialTicks);
             cnpcgeckoaddon$drawNameStandalone(npc, entityYaw, partialTicks, matrixStack, buffer, packedLight);
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post<T, M>(npc, this, partialTicks, matrixStack, buffer, packedLight));
             ci.cancel();
         }
     }

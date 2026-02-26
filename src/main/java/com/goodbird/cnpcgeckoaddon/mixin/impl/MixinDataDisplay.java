@@ -23,9 +23,9 @@ public class MixinDataDisplay implements IDataDisplay {
 
     @Shadow(remap = false)
     EntityNPCInterface npc;
-    @Shadow
+    @Shadow(remap = false)
     private String texture;
-    @Shadow
+    @Shadow(remap = false)
     public byte skinType;
     @Unique
     private final CustomModelData customNPC_Gecko_Addon$customModelData = new CustomModelData();
