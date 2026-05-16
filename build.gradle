@@ -84,7 +84,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:0.16.5"
     modImplementation "net.fabricmc.fabric-api:fabric-api:0.105.0+1.21.1"
 
-    modImplementation 'lib:CustomNPCs-1.21.1.20251124'
+    modImplementation 'lib:CustomNPCs-1.21.1.20260415-2'
     modImplementation "software.bernie.geckolib:geckolib-fabric-1.21.1:4.8.2"
     modImplementation "com.eliotlash.mclib:mclib:20"
 }

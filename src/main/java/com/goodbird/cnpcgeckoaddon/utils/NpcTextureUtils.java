@@ -25,9 +25,24 @@ public class NpcTextureUtils {
                 return DefaultPlayerSkin.getDefaultTexture();
             }
             else if(npc.display.skinType == 1 && npc.display.playerProfile != null){ //player skin
-                Minecraft minecraft = Minecraft.getInstance();
-                PlayerSkin skin = minecraft.getSkinManager().getInsecureSkin(npc.display.playerProfile);
-                npc.textureLocation = skin.texture();
+                if (!npc.isSkinLoading) {
+                    npc.isSkinLoading = true;
+
+                    Minecraft mc = Minecraft.getInstance();
+                    mc.getSkinManager().getOrLoad(npc.display.playerProfile).thenAccept(skin -> {
+                        if (skin != null && skin.texture() != null) {
+                            mc.execute(() -> {
+                                npc.textureLocation = skin.texture();
+                                npc.isSkinLoading = false;
+                            });
+                        } else {
+                            npc.isSkinLoading = false;
+                        }
+                    }).exceptionally(ex -> {
+                        npc.isSkinLoading = false;
+                        return null;
+                    });
+                }
             }
             else if(npc.display.skinType == 2 && !npc.display.getSkinUrl().isEmpty()){ // url skin
                 try{
