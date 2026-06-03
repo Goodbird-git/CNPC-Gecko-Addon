@@ -2,6 +2,8 @@ package com.goodbird.cnpcgeckoaddon.entity;
 
 import com.goodbird.cnpcgeckoaddon.CNPCGeckoAddon;
 import com.goodbird.cnpcgeckoaddon.mixin.impl.AnimControllerAccessor;
+import com.goodbird.cnpcgeckoaddon.network.NetworkWrapper;
+import com.goodbird.cnpcgeckoaddon.network.PacketInstructionKeyframe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AgeableMob;
@@ -21,6 +23,7 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.keyframe.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
@@ -104,8 +107,11 @@ public class EntityCustomModel extends Animal implements GeoAnimatable, GeoEntit
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "movement", 10, this::predicateMovement));
-        //controllers.add(new AnimationController<>(this, "attack", 10, this::predicateAttack));
+        controllers.add(new AnimationController<>(this, "movement", 10, this::predicateMovement).setCustomInstructionKeyframeHandler(this::handleCustomInstruction));
+    }
+
+    public void handleCustomInstruction(CustomInstructionKeyframeEvent<EntityCustomModel> event) {
+        NetworkWrapper.sendToServer(new PacketInstructionKeyframe(owner.getId(), event.getKeyframeData().getInstructions()));
     }
 
     @Override

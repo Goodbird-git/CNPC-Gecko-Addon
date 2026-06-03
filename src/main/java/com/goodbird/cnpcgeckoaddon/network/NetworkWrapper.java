@@ -22,8 +22,12 @@ public class NetworkWrapper {
         wrapper.registerMessage(0,PacketSyncAnimation.class,PacketSyncAnimation::encode,PacketSyncAnimation::decode,PacketSyncAnimation::handle);
         wrapper.registerMessage(1,PacketSyncTileAnimation.class,PacketSyncTileAnimation::encode,PacketSyncTileAnimation::decode,PacketSyncTileAnimation::handle);
         wrapper.registerMessage(2,PacketSyncTexture.class,PacketSyncTexture::encode,PacketSyncTexture::decode,PacketSyncTexture::handle);
+        wrapper.registerMessage(3,PacketInstructionKeyframe.class,PacketInstructionKeyframe::encode,PacketInstructionKeyframe::decode,PacketInstructionKeyframe::handle);
     }
 
+    public static void sendToServer(Object message) {
+        wrapper.sendToServer(message);
+    }
 
     public static void sendToPlayer(Object message, ServerPlayer player) {
         wrapper.sendTo(message, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);

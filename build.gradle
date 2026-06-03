@@ -101,7 +101,7 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.20.1-47.1.3'
-    implementation fg.deobf('lib:CustomNPCs:1.20.1-GBPort-Unofficial-20250225')
+    implementation fg.deobf('libs:CustomNPCs:1.20.1-GBPort-Unofficial-20250225')
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-1.20.1:4.4.6")
     implementation("com.eliotlash.mclib:mclib:20")
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
@@ -115,9 +115,9 @@ jar {
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : project.jar.archiveVersion,
                 "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
-                "MixinConfigs": "mixins.cnpcgeckoaddon.json", // Конфигурации миксинов, через зяпятую если их несколько
-                "FMLCorePluginContainsFMLMod": "true",  // Не забываем указать эти два флага,
-                "ForceLoadAsMod": "true",               // чтобы Forge нормально загрузил и мод, и миксины
+                "MixinConfigs": "mixins.cnpcgeckoaddon.json",
+                "FMLCorePluginContainsFMLMod": "true",
+                "ForceLoadAsMod": "true",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }

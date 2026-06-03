@@ -5,6 +5,7 @@
   "refmap": "mixins.cnpcgeckoaddon.refmap.json",
   "mixins": [
     "AnimControllerAccessor",
+    "EnumScriptTypeMixin",
     "MixinBlockScriptedWrapper",
     "MixinDataDisplay",
     "MixinEntityCustomNpc",
@@ -15,10 +16,10 @@
     "TileScriptedMixin"
   ],
   "client": [
+    "ClientMixinDataDisplay",
     "MixinBlockScriptedRenderer",
     "MixinGuiCreationEntities",
-    "MixinRenderNPCInterface",
-    "ClientMixinDataDisplay"
+    "MixinRenderNPCInterface"
   ],
   "server": []
 }
