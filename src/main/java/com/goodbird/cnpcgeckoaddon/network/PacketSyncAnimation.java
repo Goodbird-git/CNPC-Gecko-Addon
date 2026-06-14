@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import noppes.npcs.entity.EntityCustomNpc;
 import software.bernie.geckolib.animation.Animation;
@@ -78,7 +79,7 @@ public class PacketSyncAnimation implements CustomPacketPayload {
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
-        return CustomPacketPayload.createType("cnpcgeckoaddon"+getClass().getSimpleName().toLowerCase());
+        return new Type<>(ResourceLocation.parse("cnpcgeckoaddon:"+getClass().getSimpleName().toLowerCase()));
     }
 }
 

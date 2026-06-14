@@ -20,7 +20,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-@EventBusSubscriber(bus=EventBusSubscriber.Bus.MOD, modid=CustomNpcs.MODID)
+@EventBusSubscriber(bus=EventBusSubscriber.Bus.MOD, modid=CNPCGeckoAddon.MODID)
 public class NetworkWrapper {
 
 

@@ -8,6 +8,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import noppes.npcs.blocks.tiles.TileScripted;
 import software.bernie.geckolib.animation.Animation;
@@ -81,7 +82,7 @@ public class PacketSyncTileAnimation implements CustomPacketPayload {
 
     @Override
     public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
-        return CustomPacketPayload.createType("cnpcgeckoaddon"+getClass().getSimpleName().toLowerCase());
+        return new Type<>(ResourceLocation.parse("cnpcgeckoaddon:"+getClass().getSimpleName().toLowerCase()));
     }
 }
 
