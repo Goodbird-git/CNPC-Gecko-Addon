@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import noppes.npcs.client.renderer.RenderNPCInterface;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -34,10 +35,12 @@ public abstract class MixinRenderNPCInterface <T extends EntityNPCInterface, M e
     @Inject(method = "render(Lnoppes/npcs/entity/EntityNPCInterface;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",at=@At(value = "INVOKE",target = "Lnet/minecraft/client/renderer/entity/LivingEntityRenderer;render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"), cancellable = true)
     public void render(T npc, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight, CallbackInfo ci) {
         if(npc instanceof EntityCustomNpc && ((EntityCustomNpc)npc).modelData.getEntity(npc) instanceof EntityCustomModel modelEntity){
-            modelEntity.owner = npc;
-            cnpcgeckoaddon$renderGeoModel((EntityCustomNpc) npc,matrixStack,buffer,packedLight, partialTicks);
-            cnpcgeckoaddon$drawNameStandalone(npc, entityYaw, partialTicks, matrixStack, buffer, packedLight);
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post<T, M>(npc, this, partialTicks, matrixStack, buffer, packedLight));
+            if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Pre<T, M>(npc, this, partialTicks, matrixStack, buffer, packedLight))) {
+                modelEntity.owner = npc;
+                cnpcgeckoaddon$renderGeoModel((EntityCustomNpc) npc, matrixStack, buffer, packedLight, partialTicks);
+                cnpcgeckoaddon$drawNameStandalone(npc, entityYaw, partialTicks, matrixStack, buffer, packedLight);
+                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post<T, M>(npc, this, partialTicks, matrixStack, buffer, packedLight));
+            }
             ci.cancel();
         }
     }
